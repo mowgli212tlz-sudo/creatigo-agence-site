@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light" data-theme-defaut="light" data-barre="normale" data-densite="normale" data-calme="0">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#f2f5fb">
+<title>Administration | Creatigo</title>
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preload" href="../assets/app/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../assets/theme.js"></script>
+<link rel="stylesheet" href="../assets/app/app.css"><link rel="stylesheet" href="../assets/app/agence.css"><link rel="stylesheet" href="../assets/app/marque.css"></head>
+<body class="adm">
+<a class="evitement" href="#main">Aller au contenu</a>
+
+<!-- connexion : même écran que l'appli RH (volet de présentation + carte de connexion) -->
+<main id="login" class="connexion" hidden>
+  <section class="connexion-visuel">
+    <a class="marque" href="../" title="Retour au site"><span class="logo"><img src="../assets/logo.svg" alt="" width="24" height="24"></span><div>Creatigo<small>Espace agence</small></div></a>
+    <div>
+      <span class="connexion-pastille"><span data-ic="sparkles" data-taille="14"></span>Gestion de l’agence</span>
+      <h2>Clients, devis, factures et projets, <em>au même endroit</em>.</h2>
+      <p>Le suivi commercial et la production de l’agence dans un seul outil, avec un assistant qui trie ce qui attend une action.</p>
+      <ul>
+        <li><div><b>Un accès par compte</b><span>Direction, commerciaux et production ne voient pas les mêmes données.</span></div></li>
+        <li><div><b>Des chiffres calculés sur vos données</b><span>Chiffre d’affaires, devis en cours, encaissements et projets, sans saisie en double.</span></div></li>
+        <li><div><b>L’espace client relié</b><span>Les demandes de vos clients arrivent ici, vos réponses partent chez eux.</span></div></li>
+      </ul>
+    </div>
+    <div class="connexion-masc" aria-hidden="true"><img src="../assets/mascotte/mascotte.webp" alt=""></div>
+    <footer>Creatigo Agence · espace de gestion</footer>
+  </section>
+  <section class="connexion-formulaire">
+    <div class="connexion-outils"><button class="btn-icone connexion-theme theme-btn" type="button" data-theme-toggle aria-label="Changer de thème (clair / sombre)"><span class="ic-moon" data-ic="moon"></span><span class="ic-sun" data-ic="sun"></span></button></div>
+    <a class="marque connexion-marque-mobile" href="../"><span class="logo"><img src="../assets/logo.svg" alt="" width="24" height="24"></span><div>Creatigo<small>Espace agence</small></div></a>
+    <form id="lf" class="connexion-carte">
+      <div class="connexion-tete"><h1>Connexion</h1><p class="discret mut">Accédez à l’espace de gestion de l’agence avec votre code.</p></div>
+      <div class="erreur" id="lerr" role="alert"></div>
+      <label class="champ" id="email-l" hidden><span>Adresse e-mail</span><div class="champ-icone"><span data-ic="mail" data-taille="17"></span><input type="email" id="email" autocomplete="username" placeholder="prenom@creatigo.fr"></div></label>
+      <label class="champ"><span id="code-t">Code d’accès</span><div class="champ-icone"><span data-ic="lock-keyhole" data-taille="17"></span><input type="password" id="code" autocomplete="current-password" required placeholder="••••••••"></div></label>
+      <button class="btn principal connexion-bouton" type="submit"><span data-ic="log-in" data-taille="17"></span>Se connecter</button>
+      <p class="connexion-note lg-note"><span data-ic="info" data-taille="14"></span><span class="lg-note-t">Ce code n’est pas une sécurité : il protège seulement la vue.</span></p>
+    </form>
+    <a class="connexion-decouvrir" href="../">Retour au site<span data-ic="arrow-right" data-taille="15"></span></a>
+  </section>
+</main>
+
+<div id="app" class="cadre" hidden>
+  <div class="voile" id="voile"></div>
+  <aside class="barre" id="barre" aria-label="Menu">
+    <div class="marque"><a class="logo" href="../" title="Retour au site" aria-label="Retour au site"><img src="../assets/logo.svg" alt="" width="24" height="24"></a><div>Creatigo<small>Espace agence</small></div>
+      <button class="barre-epingle" id="epingle" type="button" aria-pressed="true" aria-label="Replier le menu (il s’ouvrira au survol)" title="Replier le menu"><span data-ic="panel-left" data-taille="16"></span></button></div>
+    <nav class="nav" id="menu" aria-label="Administration"></nav>
+    <div class="barre-pied">
+      <a class="profil" href="../" target="_blank" rel="noopener" title="Voir le site"><span class="avatar nuit" aria-hidden="true">CA</span><div><div class="nom">Creatigo Agence</div><div class="role">Administration</div></div></a>
+      <button class="btn-nuit" id="out" type="button"><span data-ic="log-out" data-taille="16"></span><span class="nav-texte">Se déconnecter</span></button>
+    </div>
+  </aside>
+  <div class="colonne">
+    <header class="haut-barre">
+      <div class="haut-gauche">
+        <button class="btn-icone burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-controls="barre"><span data-ic="menu" data-taille="20"></span></button>
+        <div class="fil-ariane">Creatigo<span data-ic="chevron-right" data-taille="14"></span><b id="titre-page"></b></div>
+      </div>
+      <div class="recherche-globale" role="search" id="recherche"><span data-ic="search" data-taille="16"></span><input type="search" id="rg" placeholder="Rechercher un client, un devis, une page…" aria-label="Recherche dans l’espace agence" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="rg-liste"><kbd class="rg-raccourci" aria-hidden="true">/</kbd>
+        <div class="rg-panneau" id="rg-p" hidden><ul class="rg-liste" id="rg-liste" role="listbox" aria-label="Résultats"></ul><div class="rg-pied" aria-hidden="true"><span><kbd>↑</kbd><kbd>↓</kbd> naviguer</span><span><kbd>↵</kbd> ouvrir</span><span><kbd>Échap</kbd> fermer</span></div></div></div>
+      <div class="haut-droite">
+        <span class="puce-date" title="Les données sont enregistrées dans ce navigateur"><span data-ic="database" data-taille="14"></span><span class="pd-t">Ce navigateur</span></span>
+        <button class="btn-icone theme-btn" type="button" data-theme-toggle aria-label="Changer de thème (clair / sombre)"><span class="ic-moon" data-ic="moon"></span><span class="ic-sun" data-ic="sun"></span></button>
+        <div class="cloche-zone">
+          <button class="btn-icone cloche" id="cloche" type="button" aria-label="À traiter" aria-expanded="false" aria-controls="cloche-p"><span id="cloche-i"></span><span class="point" id="cloche-n" hidden></span></button>
+          <div class="cloche-panneau" id="cloche-p" role="dialog" aria-label="À traiter" hidden></div>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="principal-zone adm-main" tabindex="-1"></main>
+  </div>
+</div>
+<div id="bulle" class="bulle" role="tooltip" hidden></div>
+<script type="module" src="../assets/app/kit.js"></script>
+<script defer src="icons.js"></script><script defer src="../assets/supabase-config.js"></script><script defer src="../assets/store.js"></script><script defer src="../assets/app/coque.js"></script><script defer src="modules.js"></script><script defer src="portal.js"></script><script defer src="equipe.js"></script><script defer src="admin.js"></script><script defer src="../assets/pw-toggle.js"></script>
+</body></html>

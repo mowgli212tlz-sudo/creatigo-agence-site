@@ -1,0 +1,4 @@
+# Site de démonstration : aucune indexation (voir PROD dans build.mjs)
+User-agent: *
+Disallow: /
+Sitemap: https://creatigo-agence-demo.netlify.app/sitemap.xml
