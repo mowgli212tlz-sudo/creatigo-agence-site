@@ -4663,3 +4663,6 @@ header .dd .all a:hover i{transform:none!important}
 .mp.static .mp-3d{height:auto;max-height:340px;margin:0 auto;scale:1!important;translate:0 0!important;opacity:1!important}
 .mp.static .mp-fl{display:none}
 @media(max-width:900px){#methode.static .mp-pts,#methode.static .mp-cta{display:flex}#methode.static .mp-cta{display:inline-flex;align-self:flex-start}}
+/* barre sombre : traits du menu en blanc */
+header.nuit .burger summary span,header.nuit .burger summary span::before,header.nuit .burger[open] summary span::after{background:#fff}
+header.nuit .burger[open] summary span{background:transparent}
