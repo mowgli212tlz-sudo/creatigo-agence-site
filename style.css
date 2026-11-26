@@ -4637,3 +4637,23 @@ header .dd .all a:hover i{transform:none!important}
 /* « 4 étapes » sur téléphone : la frise du bas ne recouvre plus rien (liste et bouton masqués, le texte de l'étape reste) */
 @media(max-width:900px){#methode .mp-pts,#methode .mp-cta{display:none}}
 @media(max-width:900px){.dv-stage.dv-3d{min-height:0;padding:0;aspect-ratio:3/2}.dv-3d .sv3d{position:static;width:100%;height:100%}.dv-3d .dv-toast{display:none}}
+
+/* pas de pastille ronde devant les badges et les petites listes (ça fait « généré ») */
+#methode .mp-et i,.mp-et i,.live-tag .dot,.cq-h .dot,.pw-tag i,.mp-art .tag .ok,.fk-line b{display:none!important}
+.vsl-et::before,.vsl-cap .lv::before,.sx-feat li::before{content:none!important}
+.mp-et{padding-left:15px!important;padding-right:15px!important}.pw-tag{padding-left:14px!important}
+@media(max-width:900px){.mp-et{padding-left:11px!important;padding-right:11px!important}}
+
+/* menu téléphone : panneau pleine largeur sous la barre, sans barre de défilement, services en grille */
+.burger summary:focus{outline:none}.burger summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media(max-width:1000px){
+.bmenu{position:fixed;left:0;right:0;top:calc(100% + 10px);width:auto;max-height:calc(100svh - 100px);overflow-y:auto;scrollbar-width:none;padding:14px;border-radius:22px;gap:2px;box-shadow:0 0 0 1px var(--filet),0 24px 60px rgba(14,15,19,.22)}
+.bmenu::-webkit-scrollbar{display:none}
+.bmenu>a{padding:13px 12px;font-weight:600;font-size:1.02rem;color:var(--encre)}
+.bmenu>a:not(.bm-cta)+a:not(.bm-cta),.bmenu .bm-sv+a{border-top:1px solid var(--filet);border-radius:0}
+.bm-sv{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:2px 0 10px}
+.bmenu .bm-sv a.sub{padding:10px 12px;border-radius:12px;background:var(--gris,#f3f5f9);font-size:.86rem;line-height:1.25;color:var(--texte)}
+.bmenu a.bm-cta{margin-top:10px;padding:14px;border-radius:14px}
+}
+@media(max-width:360px){.bm-sv{grid-template-columns:1fr}}
+.burger,.burger[open]{box-shadow:none!important;background:none!important;border:0!important;border-radius:0!important;padding:0!important}

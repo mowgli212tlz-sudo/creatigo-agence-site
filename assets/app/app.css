@@ -3405,3 +3405,13 @@ img.il-etape.il-3d { max-height: 200px; }
 .connexion-ou::before, .connexion-ou::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .3; }
 .connexion-note { flex-wrap: wrap; }
 .connexion-note .lien-discret { display: inline; width: auto; padding: 0; margin: 0; }
+/* connexion par compte : grille 2 × 2 de boutons sobres, identiques, qui suivent le thème clair/sombre */
+.connexion-comptes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-compte { display: flex; align-items: center; justify-content: center; gap: 10px; height: 46px; padding: 0 12px; border-radius: 12px;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent); background: color-mix(in srgb, currentColor 4%, transparent);
+  color: inherit; font: 600 .88rem/1 inherit; cursor: pointer; transition: background .15s, border-color .15s; }
+.btn-compte:hover { background: color-mix(in srgb, currentColor 9%, transparent); border-color: color-mix(in srgb, currentColor 28%, transparent); }
+.btn-compte:focus-visible { outline: 2px solid var(--accent, #3d7bff); outline-offset: 2px; }
+.btn-compte svg { flex: none; }
+.connexion-liens { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.connexion-liens .lien-discret { width: auto; padding: 0; font-size: .84rem; }

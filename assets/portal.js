@@ -60,15 +60,19 @@
     var pw = h('input', { type: 'password', autocomplete: 'current-password', required: true, placeholder: '••••••••' })
     var dire = function (t) { msg.textContent = t; msg.hidden = !t; info.hidden = true }
     var form = h('form', { class: 'connexion-carte', novalidate: true },
-      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Connexion'), h('p', { class: 'discret' }, 'Espace réservé aux clients de l’agence. Connectez-vous avec votre e-mail ou votre compte Google.')),
+      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Connexion'), h('p', { class: 'discret' }, 'Espace réservé aux clients de l’agence.')),
       msg, info,
       champ('Adresse e-mail', 'mail', mail), champ('Mot de passe', 'lock-keyhole', pw),
       h('button', { class: 'btn principal connexion-bouton', type: 'submit' }, ic('log-in', 17), 'Se connecter'),
-      separateur(), boutonGoogle(),
-      h('button', { class: 'lien-discret', type: 'button', onclick: function () {
+      separateur(), comptes(),
+      h('div', { class: 'connexion-liens' }, h('button', { class: 'lien-discret', type: 'button', onclick: function () {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Saisissez d’abord votre adresse e-mail ci-dessus.'); mail.focus(); return }
         S.auth.recover(mail.value.trim(), location.origin + location.pathname).then(function () { dire(''); info.textContent = 'Si cette adresse est autorisée, un e-mail vient de vous être envoyé avec un lien pour choisir un nouveau mot de passe.'; info.hidden = false }, function () { dire('Envoi impossible pour le moment. Réessayez plus tard.') })
       } }, 'Mot de passe oublié ?'),
+      h('button', { class: 'lien-discret', type: 'button', onclick: function () {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Saisissez d’abord votre adresse e-mail ci-dessus.'); mail.focus(); return }
+        S.auth.lienMagique(mail.value.trim().toLowerCase(), location.origin + location.pathname).then(function () { dire(''); info.textContent = 'Un lien de connexion vient de vous être envoyé par e-mail. Ouvrez-le sur cet appareil.'; info.hidden = false }, function (err) { dire('Envoi impossible : ' + err.message) })
+      } }, 'Recevoir un lien par e-mail')),
       h('p', { class: 'connexion-note' }, ic('info', 14), 'Pas encore de compte ? ', h('button', { class: 'lien-discret', type: 'button', onclick: inscription }, 'Créer un compte')))
     form.addEventListener('submit', function (e) {
       e.preventDefault(); dire('')
@@ -80,11 +84,20 @@
 
   // bouton « Continuer avec Google » (logo officiel en couleurs)
   var G_SVG = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>'
-  function boutonGoogle() {
-    var b = h('button', { class: 'btn connexion-bouton btn-google', type: 'button', onclick: function () { S.auth.google(location.origin + location.pathname) } })
-    b.innerHTML = G_SVG; b.append('Continuer avec Google'); return b
+  var COMPTES = [
+    ['google', 'Google', G_SVG],
+    ['azure', 'Microsoft', '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#F25022" d="M1 1h10.5v10.5H1z"/><path fill="#7FBA00" d="M12.5 1H23v10.5H12.5z"/><path fill="#00A4EF" d="M1 12.5h10.5V23H1z"/><path fill="#FFB900" d="M12.5 12.5H23V23H12.5z"/></svg>'],
+    ['linkedin_oidc', 'LinkedIn', '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>'],
+    ['facebook', 'Facebook', '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#0866FF" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>'],
+  ]
+  // connexion par un compte : grille de boutons identiques (logo + nom), avant le formulaire e-mail
+  function comptes() {
+    return h('div', { class: 'connexion-comptes' }, COMPTES.map(function (a) {
+      var b = h('button', { class: 'btn-compte', type: 'button', 'aria-label': 'Continuer avec ' + a[1], onclick: function () { S.auth.oauth(a[0], location.origin + location.pathname) } })
+      b.innerHTML = a[2]; b.append(h('span', {}, a[1])); return b
+    }))
   }
-  function separateur() { return h('div', { class: 'connexion-ou' }, h('span', {}, 'ou')) }
+  function separateur() { return h('div', { class: 'connexion-ou' }, h('span', {}, 'ou continuer avec')) }
 
   /* ---------- création de compte : le compte reste vide tant que l'agence ne l'a pas relié à une fiche client ---------- */
   function inscription() {
@@ -97,7 +110,7 @@
     var form = h('form', { class: 'connexion-carte', novalidate: true },
       h('div', { class: 'connexion-tete' }, h('h1', {}, 'Créer un compte'), h('p', { class: 'discret' }, 'Votre compte est relié à votre projet par l’agence, en général sous 24 h.')),
       msg, info, champ('Nom', 'user', nom), champ('Adresse e-mail', 'mail', mail), champ('Mot de passe (10 caractères minimum)', 'lock-keyhole', a), champ('Confirmer le mot de passe', 'lock-keyhole', b),
-      envoi, separateur(), boutonGoogle(), h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
+      envoi, separateur(), comptes(), h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
     form.addEventListener('submit', function (e) {
       e.preventDefault(); dire('')
       if (!nom.value.trim()) { dire('Indiquez votre nom.'); nom.focus(); return }
