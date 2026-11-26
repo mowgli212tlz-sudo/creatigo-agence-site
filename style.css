@@ -4610,3 +4610,30 @@ header .dd .all a:hover i{transform:none!important}
 .ap-h3d{display:block;width:min(100%,300px);height:auto;margin:22px 0 0;filter:drop-shadow(0 18px 22px rgba(20,60,160,.2))}
 .ap-e3d{flex:none;width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(20,60,160,.18))}
 
+
+/* mascotte en image fixe dans l'en-tête d'une section (aucun effet) */
+.head.a-pose{position:relative;padding-right:200px}
+.head.a-pose .pose3d{position:absolute;right:0;bottom:-24px;height:210px;width:auto;pointer-events:none}
+.recap .pose3d{display:block;height:150px;width:auto;margin:-80px auto 6px}
+@media(max-width:820px){.head.a-pose{padding-right:0}.head.a-pose .pose3d{position:static;display:block;height:150px;margin:12px 0 0}.recap .pose3d{display:none}}
+.a-404{position:relative}.a-404 .pose3d{position:absolute;right:0;top:50%;translate:0 -50%;height:300px;width:auto;pointer-events:none}
+@media(max-width:820px){.a-404 .pose3d{position:static;translate:none;display:block;height:180px;margin:0 0 12px}}
+
+/* images 3D posées sans cadre ni fond derrière */
+.dv-stage,.pr-vis,.bg-cv{background:none!important;box-shadow:none!important;border:0!important}
+.ap-hr .ap-h3d{width:auto;height:210px;margin:18px auto 0}
+/* L'agence et Blog : scène 3D (Figma) en en-tête à la place de la mascotte */
+.a3d{display:grid;place-items:center}.a3d::before,.a3d::after{content:none!important}
+.hero3d{display:block;width:100%;max-width:640px;height:auto;filter:drop-shadow(0 24px 30px rgba(20,60,160,.2))}
+
+/* bouton menu (téléphone) : pas d'anneau, deux traits centrés, croix centrée à l'ouverture */
+.burger summary{box-shadow:none!important;background:none!important;width:44px;height:44px}
+.burger summary span{top:-3px;width:22px}
+.burger summary span::before{width:22px;top:6px}
+.burger[open] summary span{top:0}
+.burger[open] summary span::before{top:0}
+.burger[open] summary span::after{width:22px}
+@media(max-width:980px){.mp-3d{scale:1!important;translate:0 0!important}}
+/* « 4 étapes » sur téléphone : la frise du bas ne recouvre plus rien (liste et bouton masqués, le texte de l'étape reste) */
+@media(max-width:900px){#methode .mp-pts,#methode .mp-cta{display:none}}
+@media(max-width:900px){.dv-stage.dv-3d{min-height:0;padding:0;aspect-ratio:3/2}.dv-3d .sv3d{position:static;width:100%;height:100%}.dv-3d .dv-toast{display:none}}
