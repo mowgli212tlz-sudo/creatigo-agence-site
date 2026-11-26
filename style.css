@@ -4510,7 +4510,7 @@ header .dd .all a:hover i{transform:none!important}
 .sv3-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .sv3-bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.7;mix-blend-mode:screen;animation:sv3drift 22s ease-in-out infinite alternate}
 .sv3-bg i:nth-child(1){left:48%;top:-18%;width:56vw;height:56vw;background:radial-gradient(closest-side,#1d4dff,transparent)}
-.sv3-bg i:nth-child(2){left:-12%;top:40%;width:42vw;height:42vw;background:radial-gradient(closest-side,#5b2cff,transparent);opacity:.45;animation-duration:28s;animation-direction:alternate-reverse}
+.sv3-bg i:nth-child(2){left:-12%;top:40%;width:42vw;height:42vw;background:radial-gradient(closest-side,#1a46d9,transparent);opacity:.45;animation-duration:28s;animation-direction:alternate-reverse}
 .sv3-bg i:nth-child(3){left:62%;top:55%;width:34vw;height:34vw;background:radial-gradient(closest-side,#00b3ff,transparent);opacity:.35;animation-duration:18s}
 @keyframes sv3drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vw,4vh) scale(1.12)}100%{transform:translate(4vw,-3vh) scale(.94)}}
 .sv3-bg::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.55) 1px,transparent 1.5px);background-size:140px 140px;background-position:20px 30px;opacity:.25;-webkit-mask-image:linear-gradient(#000,transparent 60%);mask-image:linear-gradient(#000,transparent 60%)}

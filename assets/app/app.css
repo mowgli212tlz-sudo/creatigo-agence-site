@@ -3415,3 +3415,13 @@ img.il-etape.il-3d { max-height: 200px; }
 .btn-compte svg { flex: none; }
 .connexion-liens { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .connexion-liens .lien-discret { width: auto; padding: 0; font-size: .84rem; }
+
+/* logo plus grand : écrans de connexion et menu latéral (espace client, admin) */
+.marque { font-size: 19px !important; gap: 12px; }
+.marque .logo { width: 44px; height: 44px; border-radius: 12px; background: none; border: 0; box-shadow: none; }
+.marque .logo img { width: 38px !important; height: 38px !important; }
+.marque small { font-size: 11.5px; }
+.connexion .marque { font-size: 24px !important; gap: 14px; }
+.connexion .marque .logo { width: 56px; height: 56px; }
+.connexion .marque .logo img { width: 50px !important; height: 50px !important; }
+.connexion .marque small { font-size: 12.5px !important; }
