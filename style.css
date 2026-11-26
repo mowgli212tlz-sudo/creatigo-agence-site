@@ -4657,3 +4657,9 @@ header .dd .all a:hover i{transform:none!important}
 }
 @media(max-width:360px){.bm-sv{grid-template-columns:1fr}}
 .burger,.burger[open]{box-shadow:none!important;background:none!important;border:0!important;border-radius:0!important;padding:0!important}
+/* « 4 étapes » empilées (téléphone, tablette) : chaque étape = tablette 3D puis son texte, rien ne se superpose */
+.mp.static .mp-main{gap:56px;padding:20px 0 40px}
+.mp.static .mp-s{display:flex;flex-direction:column;gap:18px;transform:none!important;translate:none!important}
+.mp.static .mp-3d{height:auto;max-height:340px;margin:0 auto;scale:1!important;translate:0 0!important;opacity:1!important}
+.mp.static .mp-fl{display:none}
+@media(max-width:900px){#methode.static .mp-pts,#methode.static .mp-cta{display:flex}#methode.static .mp-cta{display:inline-flex;align-self:flex-start}}

@@ -50,7 +50,8 @@
     var stage = $('.mp-stage', mp), svg = $('.mp-path', mp), base = $('.base', svg), fill = $('.fill', svg), pilot = $('.pilot', svg)
     var nodes = $$('.mp-n', mp), panes = $$('.mp-s', mp), N = nodes.length, W = 0, H = 150, len = 1, pts = [], idx = -1, TOP = 84
     var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)) }
-    if (reduce) { mp.classList.add('static'); panes.forEach(function (p) { p.classList.add('on') }) }
+    // téléphone et tablette : les 4 étapes s'empilent (pas de scène épinglée ni de frise qui recouvre le texte)
+    if (reduce || matchMedia('(max-width: 980px)').matches) { mp.classList.add('static'); panes.forEach(function (p) { p.classList.add('on') }) }
     else {
       var build = function () {
         W = svg.clientWidth || 600
