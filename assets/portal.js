@@ -42,7 +42,7 @@
             ['Ce qui est livré, ce qui est attendu', 'Les livrables d’un côté, vos actions de l’autre.'],
             ['Un échange direct', 'Vos demandes arrivent chez l’équipe, les réponses ici.'],
           ].map(function (x) { return h('li', {}, h('div', {}, h('b', {}, x[0]), h('span', {}, x[1]))) }))),
-        UI.mascotte('mascotte', 'connexion-masc'),
+        UI.mascotte('pose-laptop', 'connexion-masc'),
         h('footer', {}, 'Creatigo Agence · espace client')),
       h('section', { class: 'connexion-formulaire' },
         h('div', { class: 'connexion-outils' }, themeBtn('connexion-theme')),

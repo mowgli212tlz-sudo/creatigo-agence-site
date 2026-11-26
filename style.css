@@ -4611,13 +4611,6 @@ header .dd .all a:hover i{transform:none!important}
 .ap-e3d{flex:none;width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(20,60,160,.18))}
 
 
-/* mascotte en image fixe dans l'en-tête d'une section (aucun effet) */
-.head.a-pose{position:relative;padding-right:200px}
-.head.a-pose .pose3d{position:absolute;right:0;bottom:-24px;height:210px;width:auto;pointer-events:none}
-.recap .pose3d{display:block;height:150px;width:auto;margin:-80px auto 6px}
-@media(max-width:820px){.head.a-pose{padding-right:0}.head.a-pose .pose3d{position:static;display:block;height:150px;margin:12px 0 0}.recap .pose3d{display:none}}
-.a-404{position:relative}.a-404 .pose3d{position:absolute;right:0;top:50%;translate:0 -50%;height:300px;width:auto;pointer-events:none}
-@media(max-width:820px){.a-404 .pose3d{position:static;translate:none;display:block;height:180px;margin:0 0 12px}}
 
 /* images 3D posées sans cadre ni fond derrière */
 .dv-stage,.pr-vis,.bg-cv{background:none!important;box-shadow:none!important;border:0!important}
