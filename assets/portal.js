@@ -68,13 +68,43 @@
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Saisissez d’abord votre adresse e-mail ci-dessus.'); mail.focus(); return }
         S.auth.recover(mail.value.trim(), location.origin + location.pathname).then(function () { dire(''); info.textContent = 'Si cette adresse est autorisée, un e-mail vient de vous être envoyé avec un lien pour choisir un nouveau mot de passe.'; info.hidden = false }, function () { dire('Envoi impossible pour le moment. Réessayez plus tard.') })
       } }, 'Mot de passe oublié ?'),
-      h('p', { class: 'connexion-note' }, ic('info', 14), 'Pas encore d’accès ? L’agence vous envoie une invitation par e-mail.'))
+      h('p', { class: 'connexion-note' }, ic('info', 14), 'Pas encore de compte ? ', h('button', { class: 'lien-discret', type: 'button', onclick: inscription }, 'Créer un compte')))
     form.addEventListener('submit', function (e) {
       e.preventDefault(); dire('')
       if (!mail.value.trim() || !pw.value) { dire('Renseignez votre adresse e-mail et votre mot de passe.'); return }
       S.auth.signIn(mail.value.trim(), pw.value).then(function () { boot() }, function () { dire('Connexion refusée : e-mail ou mot de passe incorrect.') })
     })
     ecranConnexion(form); mail.focus()
+  }
+
+  /* ---------- création de compte : le compte reste vide tant que l'agence ne l'a pas relié à une fiche client ---------- */
+  function inscription() {
+    var msg = h('div', { class: 'erreur', role: 'alert', hidden: true }), info = h('div', { class: 'ok', role: 'status', hidden: true })
+    var nom = h('input', { type: 'text', autocomplete: 'name', required: true, placeholder: 'Prénom Nom ou entreprise' })
+    var mail = h('input', { type: 'email', autocomplete: 'email', required: true, placeholder: 'vous@entreprise.fr' })
+    var a = h('input', { type: 'password', autocomplete: 'new-password', minlength: '10', required: true }), b = h('input', { type: 'password', autocomplete: 'new-password', required: true })
+    var dire = function (t) { msg.textContent = t; msg.hidden = !t; info.hidden = true }
+    var envoi = h('button', { class: 'btn principal connexion-bouton', type: 'submit' }, ic('user-plus', 17), 'Créer mon compte')
+    var form = h('form', { class: 'connexion-carte', novalidate: true },
+      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Créer un compte'), h('p', { class: 'discret' }, 'Votre compte est relié à votre projet par l’agence, en général sous 24 h.')),
+      msg, info, champ('Nom', 'user', nom), champ('Adresse e-mail', 'mail', mail), champ('Mot de passe (10 caractères minimum)', 'lock-keyhole', a), champ('Confirmer le mot de passe', 'lock-keyhole', b),
+      envoi, h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); dire('')
+      if (!nom.value.trim()) { dire('Indiquez votre nom.'); nom.focus(); return }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Adresse e-mail invalide.'); mail.focus(); return }
+      if (a.value.length < 10) { dire('Le mot de passe doit faire au moins 10 caractères.'); a.focus(); return }
+      if (a.value !== b.value) { dire('Les deux mots de passe ne sont pas identiques.'); b.focus(); return }
+      envoi.disabled = true
+      S.auth.signUp(mail.value.trim().toLowerCase(), a.value, nom.value.trim(), location.origin + location.pathname).then(function (s) {
+        if (s) return boot()
+        info.textContent = 'Compte créé. Ouvrez l’e-mail de confirmation que nous venons de vous envoyer, puis connectez-vous.'; info.hidden = false
+      }, function (err) {
+        envoi.disabled = false
+        dire(/already|registered|exists/i.test(err.message) ? 'Un compte existe déjà avec cette adresse : connectez-vous.' : /disabled|not allowed/i.test(err.message) ? 'La création de compte n’est pas encore ouverte : contactez l’agence.' : 'Création impossible : ' + err.message)
+      })
+    })
+    ecranConnexion(form); nom.focus()
   }
 
   /* ---------- choix du mot de passe (lien d'invitation ou de réinitialisation) ---------- */
@@ -105,7 +135,8 @@
   }
   function noAccount() {
     ecranConnexion(h('div', { class: 'connexion-carte' },
-      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Aucun espace associé'), h('p', { class: 'discret' }, 'Cette adresse n’est associée à aucun espace client. Contactez l’agence si vous pensez qu’il s’agit d’une erreur.')),
+      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Compte en attente'), h('p', { class: 'discret' }, 'Votre compte est bien créé. L’agence doit encore le relier à votre projet : vous serez prévenu par e-mail. En attendant, vous pouvez nous écrire ou demander un devis.')),
+      h('a', { class: 'btn principal connexion-bouton', href: '../devis/' }, ic('file-text', 17), 'Demander un devis'),
       h('button', { class: 'btn connexion-bouton', type: 'button', onclick: function () { S.auth.signOut().then(login) } }, ic('log-out', 17), 'Se déconnecter')))
   }
 

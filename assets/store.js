@@ -216,6 +216,12 @@
   Store.auth = {
     enabled: !!(SB && SB.url && SB.key),
     session: session,
+    // création de compte par le client lui-même : sans fiche reliée (portal_accounts), le compte ne voit rien ; l'agence le relie ensuite
+    // rend la session si Supabase ne demande pas de confirmer l'e-mail, sinon null (un e-mail de confirmation part)
+    signUp: function (email, pw, nom, retour) {
+      return authCall('signup?redirect_to=' + encodeURIComponent(retour), { email: email, password: pw, data: { nom: nom } })
+        .then(function (j) { return j && j.access_token ? saveSession(j) : null })
+    },
     signIn: function (email, pw) { return authCall('token?grant_type=password', { email: email, password: pw }).then(saveSession).then(function (s) { api('rpc/log_event', { method: 'POST', body: JSON.stringify({ kind: 'connexion' }) }).catch(function () {}); return s }) },
     signOut: function () { var s = session(); sessionStorage.removeItem(K_SES); cache = {}; if (s) fetch(SB.url + '/auth/v1/logout', { method: 'POST', headers: { apikey: SB.key, Authorization: 'Bearer ' + s.access_token } }).catch(function () {}); return Promise.resolve() },
   }

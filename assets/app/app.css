@@ -3382,3 +3382,18 @@ img.il-3d { display: block; width: 100%; height: auto; max-height: 150px; object
 img.il-etape.il-3d { max-height: 200px; }
 @media (prefers-reduced-motion: reduce) { img.il-3d { animation: none; } }
 [data-calme="1"] img.il-3d { animation: none; }
+
+/* pupilles des mascottes (les images n'en ont pas) */
+.masc-boite { position: relative; display: block; }
+.masc-boite > img { display: block; width: 100%; height: auto; }
+.masc-yeux { position: absolute; inset: 0; pointer-events: none; }
+.masc-p { position: absolute; aspect-ratio: 1; border-radius: 50%; translate: calc(-50% + var(--dx, 0%)) calc(-50% + var(--dy, 0%)); transition: translate 180ms ease-out;
+  background: radial-gradient(circle at 34% 30%, #444c60 0%, #14161d 42%, #06070a 100%); }
+.masc-p::after { content: ""; position: absolute; left: 24%; top: 20%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: #fff; opacity: .95; }
+/* l'image et ses pupilles flottent ensemble ; la boîte épouse l'image pour que les % des pupilles tombent juste */
+.entete-masc .masc-boite { height: 100%; width: fit-content; margin-left: auto; animation: masc-flotte 6s ease-in-out infinite; }
+.entete-masc .masc-boite > img { height: 100%; width: auto; animation: none; }
+.connexion-masc .masc-boite { animation: masc-flotte 6s ease-in-out infinite; }
+.connexion-masc .masc-boite > img { animation: none; }
+@media (prefers-reduced-motion: reduce) { .masc-boite { animation: none !important; } }
+[data-calme="1"] .masc-boite { animation: none !important; }

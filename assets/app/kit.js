@@ -10,8 +10,32 @@ import { illustrationEtape } from './illus-etapes.js';
 import { PHASES, feuilleDeRoute, miniParcours, planning, entonnoir, partEtape } from './parcours.js';
 
 // mascotte du site (assets/mascotte/<nom>.webp) : les pages de l'admin et de l'espace client sont à un niveau de la racine
+// les images n'ont pas de pupilles dessinées : on les pose par-dessus (positions en % de l'image, largeur en % aussi),
+// comme sur le site ; celles des mascottes illustrées viennent de mk.json
+const PUPILLES = { mascotte: [[[47.62, 24.7], [79.58, 39.01]], 9.2], mascotte2: [[[22.35, 30.2], [67.29, 47.78]], 12.5], mascotte3: [[[52.17, 20.86], [71.55, 32.3]], 6] };
+let mkJson = null;
+function poserPupilles(boite, nom) {
+  const poser = (pts, pw) => { const yeux = h('span', { class: 'masc-yeux' }); for (const [x, y] of pts) yeux.append(h('i', { class: 'masc-p', style: `left:${x}%;top:${y}%;width:${pw}%` })); boite.append(yeux); };
+  if (PUPILLES[nom]) return poser(...PUPILLES[nom]);
+  if (!nom.startsWith('mk-')) return;
+  mkJson = mkJson || fetch(new URL('../mascotte/mk.json', import.meta.url)).then((r) => r.json()).catch(() => ({}));
+  mkJson.then((d) => { const k = d[nom.slice(3)]; if (k && k.pupils) poser(k.pupils, k.pw); });
+}
+// les pupilles regardent vers la souris (un seul écouteur pour toute la page)
+let suivi = false;
+function suivreSouris() {
+  if (suivi || matchMedia('(prefers-reduced-motion: reduce)').matches) return; suivi = true;
+  addEventListener('pointermove', (e) => {
+    for (const p of document.querySelectorAll('.masc-p')) {
+      const r = p.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, m = Math.min(1, d / 300) * 0.28;
+      p.style.setProperty('--dx', (dx / d * m * 100).toFixed(1) + '%'); p.style.setProperty('--dy', (dy / d * m * 100).toFixed(1) + '%');
+    }
+  }, { passive: true });
+}
 function mascotte(nom, classe = 'entete-masc') {
-  return h('div', { class: classe, 'aria-hidden': 'true' }, h('img', { src: `../assets/mascotte/${nom}.webp`, alt: '', loading: 'lazy', decoding: 'async' }));
+  const boite = h('div', { class: 'masc-boite' }, h('img', { src: `../assets/mascotte/${nom}.webp`, alt: '', loading: 'lazy', decoding: 'async' }));
+  poserPupilles(boite, nom); suivreSouris();
+  return h('div', { class: classe, 'aria-hidden': 'true' }, boite);
 }
 
 // en-tête de page en bandeau : titre, phrase, mascotte (« m:nom ») ou illustration, actions
