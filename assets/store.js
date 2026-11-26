@@ -222,6 +222,8 @@
       return authCall('signup?redirect_to=' + encodeURIComponent(retour), { email: email, password: pw, data: { nom: nom } })
         .then(function (j) { return j && j.access_token ? saveSession(j) : null })
     },
+    // connexion Google : Supabase renvoie ici avec les jetons dans l'adresse (#access_token=…), lus par fromHash()
+    google: function (retour) { location.href = SB.url + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(retour) },
     signIn: function (email, pw) { return authCall('token?grant_type=password', { email: email, password: pw }).then(saveSession).then(function (s) { api('rpc/log_event', { method: 'POST', body: JSON.stringify({ kind: 'connexion' }) }).catch(function () {}); return s }) },
     signOut: function () { var s = session(); sessionStorage.removeItem(K_SES); cache = {}; if (s) fetch(SB.url + '/auth/v1/logout', { method: 'POST', headers: { apikey: SB.key, Authorization: 'Bearer ' + s.access_token } }).catch(function () {}); return Promise.resolve() },
   }

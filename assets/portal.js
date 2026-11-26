@@ -60,10 +60,11 @@
     var pw = h('input', { type: 'password', autocomplete: 'current-password', required: true, placeholder: '••••••••' })
     var dire = function (t) { msg.textContent = t; msg.hidden = !t; info.hidden = true }
     var form = h('form', { class: 'connexion-carte', novalidate: true },
-      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Connexion'), h('p', { class: 'discret' }, 'Espace réservé aux clients de l’agence. Utilisez l’adresse e-mail avec laquelle nous vous avons invité.')),
+      h('div', { class: 'connexion-tete' }, h('h1', {}, 'Connexion'), h('p', { class: 'discret' }, 'Espace réservé aux clients de l’agence. Connectez-vous avec votre e-mail ou votre compte Google.')),
       msg, info,
       champ('Adresse e-mail', 'mail', mail), champ('Mot de passe', 'lock-keyhole', pw),
       h('button', { class: 'btn principal connexion-bouton', type: 'submit' }, ic('log-in', 17), 'Se connecter'),
+      separateur(), boutonGoogle(),
       h('button', { class: 'lien-discret', type: 'button', onclick: function () {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Saisissez d’abord votre adresse e-mail ci-dessus.'); mail.focus(); return }
         S.auth.recover(mail.value.trim(), location.origin + location.pathname).then(function () { dire(''); info.textContent = 'Si cette adresse est autorisée, un e-mail vient de vous être envoyé avec un lien pour choisir un nouveau mot de passe.'; info.hidden = false }, function () { dire('Envoi impossible pour le moment. Réessayez plus tard.') })
@@ -77,6 +78,14 @@
     ecranConnexion(form); mail.focus()
   }
 
+  // bouton « Continuer avec Google » (logo officiel en couleurs)
+  var G_SVG = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>'
+  function boutonGoogle() {
+    var b = h('button', { class: 'btn connexion-bouton btn-google', type: 'button', onclick: function () { S.auth.google(location.origin + location.pathname) } })
+    b.innerHTML = G_SVG; b.append('Continuer avec Google'); return b
+  }
+  function separateur() { return h('div', { class: 'connexion-ou' }, h('span', {}, 'ou')) }
+
   /* ---------- création de compte : le compte reste vide tant que l'agence ne l'a pas relié à une fiche client ---------- */
   function inscription() {
     var msg = h('div', { class: 'erreur', role: 'alert', hidden: true }), info = h('div', { class: 'ok', role: 'status', hidden: true })
@@ -88,7 +97,7 @@
     var form = h('form', { class: 'connexion-carte', novalidate: true },
       h('div', { class: 'connexion-tete' }, h('h1', {}, 'Créer un compte'), h('p', { class: 'discret' }, 'Votre compte est relié à votre projet par l’agence, en général sous 24 h.')),
       msg, info, champ('Nom', 'user', nom), champ('Adresse e-mail', 'mail', mail), champ('Mot de passe (10 caractères minimum)', 'lock-keyhole', a), champ('Confirmer le mot de passe', 'lock-keyhole', b),
-      envoi, h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
+      envoi, separateur(), boutonGoogle(), h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
     form.addEventListener('submit', function (e) {
       e.preventDefault(); dire('')
       if (!nom.value.trim()) { dire('Indiquez votre nom.'); nom.focus(); return }

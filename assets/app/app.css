@@ -3397,3 +3397,9 @@ img.il-etape.il-3d { max-height: 200px; }
 .connexion-masc .masc-boite > img { animation: none; }
 @media (prefers-reduced-motion: reduce) { .masc-boite { animation: none !important; } }
 [data-calme="1"] .masc-boite { animation: none !important; }
+
+/* connexion Google */
+.btn.connexion-bouton.btn-google { gap: 10px; background: #fff !important; color: #1f1f1f !important; border: 1px solid #dadce0; box-shadow: none; }
+.btn.connexion-bouton.btn-google:hover { background: #f6f8fc !important; }
+.connexion-ou { display: flex; align-items: center; gap: 12px; color: var(--texte-3, #8a93a8); font-size: .8rem; margin: 4px 0; }
+.connexion-ou::before, .connexion-ou::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .3; }
