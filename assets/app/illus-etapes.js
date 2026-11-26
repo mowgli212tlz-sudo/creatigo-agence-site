@@ -1,3 +1,4 @@
+import { image3d } from './illustrations.js';
 // Illustrations des 4 étapes du parcours client : compositions à plat, traits fins, couleurs de l'agence
 // (bleu électrique, bleu nuit, violet en accent, gris très clairs). Dessins fixes : aucune donnée n'y entre.
 const B = '#0055ff', N = '#0b1430', V = '#6d4bff', C = '#e8eefc', G = '#c9d3ea', W = '#ffffff';
@@ -93,7 +94,9 @@ const DESSINS = {
   </g>`,
 };
 
+// les 4 étapes en 3D (Figma, assets/app3d/etape-N.webp) ; les dessins plats ci-dessus restent en secours
 export function illustrationEtape(n) {
+  if (n >= 1 && n <= 4) return image3d(`etape-${n}`, 'il-etape il-3d');
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', '0 0 320 230');
   svg.setAttribute('aria-hidden', 'true');

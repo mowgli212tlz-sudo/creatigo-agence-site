@@ -3376,3 +3376,9 @@ html[data-theme="dark"] {
 html[data-theme] .nav a[aria-current=page] { background: linear-gradient(95deg, #3d7bff 0%, #0055ff 55%, #0045d1 100%); color: #fff; box-shadow: 0 10px 26px -12px rgba(0, 85, 255, .85), inset 0 1px 0 rgba(255, 255, 255, .3); }
 html[data-theme] .nav a[aria-current=page] .ico { color: #fff; }
 td:first-child a { white-space: nowrap; }
+
+/* objets 3D (Figma) à la place des dessins SVG */
+img.il-3d { display: block; width: 100%; height: auto; max-height: 150px; object-fit: contain; filter: drop-shadow(0 10px 14px rgba(20, 60, 160, .2)); animation: illu-flotte 7s ease-in-out infinite; }
+img.il-etape.il-3d { max-height: 200px; }
+@media (prefers-reduced-motion: reduce) { img.il-3d { animation: none; } }
+[data-calme="1"] img.il-3d { animation: none; }

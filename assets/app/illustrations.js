@@ -293,7 +293,10 @@ const OBJETS = {
 // « bouclier vert » : la même forme, en vert (page Transparence)
 OBJETS['bouclier-vert'] = (c) => OBJETS.bouclier(c, 'vert');
 
+// objets rendus en 3D (Figma, assets/app3d) : une image remplace le dessin SVG quand elle existe
+const OBJETS_3D = new Set(['cloche', 'calendrier', 'graphique', 'salaire', 'contrat', 'sablier', 'effectif']);
 export function illustration(nom) {
+  if (OBJETS_3D.has(nom)) return image3d(nom);
   const dessin = OBJETS[nom];
   if (!dessin) return null;
   const c = contexte();
@@ -317,3 +320,10 @@ export const ILLU_PAR_ROUTE = {
   remunerations: 'salaire', contrats: 'contrat', salaries: 'effectif', alertes: 'cloche', agent: 'robot',
   conformite: 'bouclier-vert', journal: 'journal', admin: 'cle', parametres: 'reglages',
 };
+
+export function image3d(nom, classe = 'il-3d') {
+  const im = document.createElement('img');
+  im.src = new URL(`../app3d/${nom}.webp`, import.meta.url).href;
+  im.alt = ''; im.className = classe; im.decoding = 'async';
+  return im;
+}

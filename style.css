@@ -4617,3 +4617,7 @@ header .dd .all a:hover i{transform:none!important}
 .bg-fv .bl-3d{display:block;width:88%;height:auto;margin:auto;filter:drop-shadow(0 20px 26px rgba(20,60,160,.25))}
 .bg-cv{display:grid;place-items:center;height:120px;margin:-4px -4px 12px;border-radius:14px;background:linear-gradient(160deg,#e9f0ff,#f6f9ff)}
 .bg-cv img{max-width:72%;max-height:104px;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(20,60,160,.18))}
+/* L'agence : objets 3D (Figma) à la place des icônes plates */
+.ap-3d{display:block;height:92px;width:auto;max-width:100%;margin:0 0 12px;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(20,60,160,.18))}
+.ap-h3d{display:block;width:min(100%,300px);height:auto;margin:22px 0 0;filter:drop-shadow(0 18px 22px rgba(20,60,160,.2))}
+.ap-e3d{flex:none;width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(20,60,160,.18))}
