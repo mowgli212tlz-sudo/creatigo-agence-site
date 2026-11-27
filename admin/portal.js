@@ -7,7 +7,11 @@
 (function () {
   var K = function () { return window.AdminKit }
   var ETAPES = ['Découverte', 'Conception', 'Lancement', 'Suivi']
-  var STATUTS = [['ouverte', 'Ouverte'], ['en_cours', 'En cours'], ['terminee', 'Terminée']]
+  var STATUTS = [['ouverte', 'Ouverte'], ['en_cours', 'En cours'], ['attente_client', 'En attente du client'], ['resolue', 'Résolue'], ['terminee', 'Fermée']]
+  // centre de support (supabase/support.sql) : catégorie et priorité de chaque demande
+  var CATS = [['technique', 'Problème technique'], ['modification', 'Modification du site'], ['maintenance', 'Maintenance'], ['facturation', 'Facturation'], ['seo', 'SEO'], ['autre', 'Autre']]
+  var PRIOS = [['urgente', 'Urgente'], ['haute', 'Haute'], ['normale', 'Normale'], ['basse', 'Basse']]
+  var RANG = { urgente: 0, haute: 1, normale: 2, basse: 3 }
   var KINDS = [['livre', 'Livré'], ['attendu', 'Attendu du client'], ['info', 'Information']]
   var enc = encodeURIComponent
   function sb() { return K().S.sb }
@@ -124,20 +128,27 @@
 
     function liste() {
       main.appendChild(e('h1', { text: 'Demandes clients' }))
-      var st = e('select', {}, [e('option', { value: '', text: 'Toutes' })].concat(opts(STATUTS, ''))), zone = e('div'), msg = e('p', { class: 'msg', role: 'status' })
-      st.value = 'ouverte'
-      main.appendChild(e('div', { class: 'bar' }, [K().field('Afficher', st)])); main.appendChild(zone); main.appendChild(msg)
-      Promise.all([sb().get('portal_requests?select=id,client_id,project_id,sujet,statut,updated_at&order=updated_at.desc&limit=500'), S.list('clients')]).then(function (r) {
+      var st = e('select', {}, [e('option', { value: 'actives', text: 'À traiter (ouvertes, en cours, en attente)' }), e('option', { value: '', text: 'Toutes' })].concat(opts(STATUTS, ''))), zone = e('div'), msg = e('p', { class: 'msg', role: 'status' })
+      var fc = e('select', {}, [e('option', { value: '', text: 'Toutes' })].concat(opts(CATS, ''))), fp = e('select', {}, [e('option', { value: '', text: 'Toutes' })].concat(opts(PRIOS, '')))
+      st.value = 'actives'
+      main.appendChild(e('div', { class: 'bar' }, [K().field('Afficher', st), K().field('Catégorie', fc), K().field('Priorité', fp)])); main.appendChild(zone); main.appendChild(msg)
+      Promise.all([sb().get('portal_requests?select=id,client_id,project_id,sujet,statut,categorie,priorite,updated_at&order=updated_at.desc&limit=500'), S.list('clients')]).then(function (r) {
         var names = {}; r[1].forEach(function (c) { names[c.id] = c.societe ? c.societe + (c.nom ? ' · ' + c.nom : '') : c.nom || 'Sans nom' })
         function draw() {
           zone.textContent = ''
-          var rows = r[0].filter(function (q) { return !st.value || q.statut === st.value })
+          var rows = r[0].filter(function (q) {
+            if (fc.value && (q.categorie || 'autre') !== fc.value) return false
+            if (fp.value && (q.priorite || 'normale') !== fp.value) return false
+            if (st.value === 'actives') return ['ouverte', 'en_cours', 'attente_client'].indexOf(q.statut) >= 0
+            return !st.value || q.statut === st.value
+          }).sort(function (a, b) { return (RANG[a.priorite] == null ? 2 : RANG[a.priorite]) - (RANG[b.priorite] == null ? 2 : RANG[b.priorite]) || (a.updated_at < b.updated_at ? 1 : -1) })
           if (!rows.length) { zone.appendChild(e('p', { class: 'lead', text: 'Aucune demande dans cette liste.' })); return }
-          zone.appendChild(e('div', { class: 'tw' }, [e('table', {}, [e('thead', {}, [e('tr', {}, ['Client', 'Sujet', 'Statut', 'Dernière activité'].map(function (h) { return e('th', { text: h }) }))]), e('tbody', {}, rows.map(function (q) {
-            return e('tr', {}, [e('td', { text: names[q.client_id] || q.client_id }), e('td', {}, [e('a', { href: '#demandes/' + q.id, text: q.sujet })]), e('td', {}, [e('span', { class: 'badge b-' + q.statut, text: lab(STATUTS, q.statut) })]), e('td', { text: dt(q.updated_at) })])
+          zone.appendChild(e('div', { class: 'tw' }, [e('table', {}, [e('thead', {}, [e('tr', {}, ['Client', 'Sujet', 'Catégorie', 'Priorité', 'Statut', 'Dernière activité'].map(function (h) { return e('th', { text: h }) }))]), e('tbody', {}, rows.map(function (q) {
+            return e('tr', {}, [e('td', { text: names[q.client_id] || q.client_id }), e('td', {}, [e('a', { href: '#demandes/' + q.id, text: q.sujet })]), e('td', { text: lab(CATS, q.categorie || 'autre') }),
+              e('td', {}, [e('span', { class: 'badge b-prio-' + (q.priorite || 'normale'), text: lab(PRIOS, q.priorite || 'normale') })]), e('td', {}, [e('span', { class: 'badge b-' + q.statut, text: lab(STATUTS, q.statut) })]), e('td', { text: dt(q.updated_at) })])
           }))])]))
         }
-        st.addEventListener('change', draw); draw()
+        ;[st, fc, fp].forEach(function (x) { x.addEventListener('change', draw) }); draw()
       }).catch(err(msg))
     }
 
@@ -158,14 +169,25 @@
               e('p', { style: 'white-space:pre-wrap;margin:6px 0 0', text: m.body })])
           }))
           box.appendChild(fil)
+          // pièces jointes de la demande (déposées par le client)
+          var pjs = e('div', { class: 'panel', style: 'margin-top:16px' }, [e('h2', { text: 'Pièces jointes', style: 'margin-top:0' }), e('p', { class: 'mut', text: 'Chargement…' })])
+          box.appendChild(pjs)
+          sb().get('documents?request_id=eq.' + enc(rid) + '&deleted_at=is.null&select=id,nom,path,taille,uploaded_role,created_at&order=created_at').then(function (docs) {
+            pjs.removeChild(pjs.lastChild)
+            pjs.appendChild(docs.length ? e('ul', { class: 'liste' }, docs.map(function (d) {
+              return e('li', {}, [e('button', { class: 'lnk', type: 'button', text: d.nom, onclick: function () { sb().fichier(d.path).then(function (u) { window.open(u, '_blank', 'noopener') }, err(msg)) } }), e('span', { class: 'mut', text: ' · ' + (d.uploaded_role === 'client' ? 'client' : 'équipe') + ' · ' + dt(d.created_at) })])
+            })) : e('p', { class: 'mut', text: 'Aucun fichier joint.' }))
+          }).catch(function () { pjs.removeChild(pjs.lastChild); pjs.appendChild(e('p', { class: 'mut', text: 'Pièces jointes indisponibles.' })) })
           var rep = e('textarea', { rows: 4, maxlength: 5000, placeholder: 'Votre réponse au client…', 'aria-label': 'Réponse' })
-          var st = e('select', {}, opts(STATUTS, q.statut))
-          box.appendChild(e('div', { class: 'panel', style: 'margin-top:16px' }, [K().field('Réponse', rep), K().field('Statut de la demande', st), e('div', { class: 'cta' }, [
+          var st = e('select', {}, opts(STATUTS, q.statut)), cat = e('select', {}, opts(CATS, q.categorie || 'autre')), pri = e('select', {}, opts(PRIOS, q.priorite || 'normale'))
+          var classement = function () { return (cat.value !== (q.categorie || 'autre') || pri.value !== (q.priorite || 'normale')) ? sb().patch('portal_requests?id=eq.' + enc(rid), { categorie: cat.value, priorite: pri.value }) : null }
+          box.appendChild(e('div', { class: 'panel', style: 'margin-top:16px' }, [K().field('Réponse', rep), e('div', { class: 'grid2' }, [K().field('Statut de la demande', st), K().field('Catégorie', cat), K().field('Priorité', pri)]),
+            e('p', { class: 'mut', text: '« En attente du client » et « Résolue » préviennent le client dans son espace. Il peut rouvrir une demande résolue ou la fermer.' }), e('div', { class: 'cta' }, [
             e('button', { class: 'btn', type: 'button', text: 'Envoyer la réponse', onclick: function () {
               var texte = rep.value.trim()
               var suite = function () { return st.value !== q.statut ? sb().patch('portal_requests?id=eq.' + enc(rid), { statut: st.value }) : null }
               var go = texte ? sb().post('portal_messages', { request_id: rid, author: 'agence', body: texte }).then(function () { return q.statut === 'ouverte' && st.value === 'ouverte' ? sb().patch('portal_requests?id=eq.' + enc(rid), { statut: 'en_cours' }) : suite() }) : Promise.resolve(suite())
-              Promise.resolve(go).then(draw).catch(err(msg))
+              Promise.resolve(go).then(classement).then(draw).catch(err(msg))
             } }),
             e('button', { class: 'lnk danger', type: 'button', text: 'Supprimer la demande', onclick: function () { if (confirm('Supprimer cette demande et ses messages ?')) sb().del('portal_requests?id=eq.' + enc(rid)).then(function () { K().go('demandes') }).catch(err(msg)) } }),
           ])]))

@@ -5,4 +5,6 @@
 window.CREATIGO_SB = {
   url: 'https://gzkfwamiawpuossgwsed.supabase.co',
   key: 'sb_publishable_F0_BzRg8b8zndStQ7zrlBw_dwn_831z',
+  // Fonctions de Jarvis (assistant IA) : fonction Supabase « jarvis » (voir supabase/functions/jarvis/LISEZ-MOI.txt). Valeur vide = Netlify (/api/…).
+  api: 'https://gzkfwamiawpuossgwsed.supabase.co/functions/v1/jarvis',
 }

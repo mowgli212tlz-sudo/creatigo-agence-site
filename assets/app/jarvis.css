@@ -1,0 +1,262 @@
+/* Jarvis : bouton flottant et panneau de discussion de l'espace admin. Jetons du système (assets/app/app.css) et de la marque. */
+.jv-bouton { position: fixed; right: 22px; bottom: 22px; z-index: 80; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px 0 14px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--encre); color: var(--surface); font: 650 14px var(--police); box-shadow: 0 10px 28px -10px rgba(11, 20, 48, .55), inset 0 1px 0 rgba(255, 255, 255, .14); transition: transform .25s cubic-bezier(.16, 1, .3, 1), background .2s; }
+.jv-bouton:hover { transform: translateY(-2px); background: var(--accent); color: #fff; }
+.jv-bouton[aria-expanded=true] { background: var(--accent); color: #fff; }
+.jv-bouton:focus-visible, .jv-icone:focus-visible, .jv-envoi:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.jv-pastille { display: none; }
+
+.jv-panneau { position: fixed; right: 22px; bottom: 82px; z-index: 80; width: min(400px, calc(100vw - 24px)); height: min(620px, calc(100vh - 110px)); display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto;
+  border-radius: 22px; background: var(--surface); color: var(--encre); overflow: hidden; box-shadow: 0 0 0 1px var(--trait), 0 28px 70px -22px rgba(11, 20, 48, .5);
+  opacity: 0; transform: translateY(12px) scale(.98); transform-origin: bottom right; transition: opacity .22s cubic-bezier(.16, 1, .3, 1), transform .22s cubic-bezier(.16, 1, .3, 1); }
+.jv-panneau.ouvert { opacity: 1; transform: none; }
+.jv-panneau[hidden] { display: none; }
+
+.jv-tete { display: flex; align-items: center; gap: 10px; padding: 14px 14px 12px 16px; border-bottom: 1px solid var(--trait); }
+.jv-tete > div { flex: 1; min-width: 0; display: grid; }
+.jv-tete b { font: 800 16px/1.1 var(--titre); letter-spacing: -.02em; }
+.jv-tete small { font-size: 11.5px; color: var(--encre-3); }
+.jv-logo { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; flex: none; background: var(--accent); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25); }
+.jv-icone { width: 32px; height: 32px; border-radius: 10px; border: 0; display: grid; place-items: center; background: transparent; color: var(--encre-2); cursor: pointer; }
+.jv-icone:hover { background: var(--survol); color: var(--encre); }
+
+.jv-journal { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; overscroll-behavior: contain; }
+.jv-accueil { margin: auto 0; display: grid; gap: 8px; justify-items: start; }
+.jv-accueil .jv-logo { margin-bottom: 4px; }
+.jv-accueil b { font: 800 20px/1.1 var(--titre); letter-spacing: -.03em; }
+.jv-accueil p { font-size: 13.5px; color: var(--encre-2); line-height: 1.5; }
+.jv-sugg { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.jv-sugg button { padding: 8px 12px; border-radius: 12px; border: 0; cursor: pointer; font: 600 13px var(--police); color: var(--encre); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); text-align: left; transition: box-shadow .2s, transform .2s; }
+.jv-sugg button:hover { box-shadow: inset 0 0 0 1.5px var(--accent); transform: translateY(-1px); }
+
+.jv-msg { max-width: 88%; padding: 10px 13px; border-radius: 16px; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; animation: jv-entre .3s cubic-bezier(.16, 1, .3, 1) both; }
+.jv-msg p { margin: 0; } .jv-msg p + p, .jv-msg ul + p, .jv-msg p + ul { margin-top: 8px; }
+.jv-msg ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+.jv-msg strong { font-weight: 700; }
+.jv-msg.user { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 5px; }
+.jv-msg.assistant { align-self: flex-start; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); border-bottom-left-radius: 5px; }
+.jv-source { display: flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11.5px; color: var(--encre-3); }
+@keyframes jv-entre { from { opacity: 0; transform: translateY(6px); } }
+
+.jv-etat { align-self: flex-start; display: flex; align-items: center; gap: 10px; padding: 9px 13px; border-radius: 16px; font-size: 13px; color: var(--encre-2); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-points { display: inline-flex; gap: 4px; }
+.jv-points i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: jv-point 1.2s ease-in-out infinite; }
+.jv-points i:nth-child(2) { animation-delay: .15s; } .jv-points i:nth-child(3) { animation-delay: .3s; }
+@keyframes jv-point { 0%, 80%, 100% { opacity: .25; transform: scale(.8); } 40% { opacity: 1; transform: scale(1.1); } }
+.jv-erreur { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border-radius: 14px; font-size: 13px; line-height: 1.45; color: var(--critique-texte); background: var(--critique-fond); box-shadow: inset 0 0 0 1px var(--critique-trait); }
+.jv-erreur > span:first-child { margin-top: 2px; flex: none; }
+.jv-erreur > span:nth-child(2) { flex: 1; }
+.jv-reessayer { border: 0; background: var(--surface); color: var(--encre); font: 650 12px var(--police); padding: 5px 10px; border-radius: 9px; cursor: pointer; box-shadow: inset 0 0 0 1px var(--critique-trait); }
+
+.jv-form { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px 6px; border-top: 1px solid var(--trait); }
+.jv-champ { flex: 1; min-height: 40px; max-height: 120px; resize: none; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--trait-fort); background: var(--surface-2); font: 14px/1.4 var(--police); color: var(--encre); }
+.jv-champ:focus { outline: none; border-color: var(--accent); box-shadow: var(--anneau); background: var(--surface); }
+.jv-envoi { width: 40px; height: 40px; flex: none; border: 0; border-radius: 13px; display: grid; place-items: center; cursor: pointer; background: var(--accent); color: #fff; transition: transform .2s, opacity .2s; }
+.jv-envoi:hover:not(:disabled) { transform: translateY(-1px); }
+.jv-envoi:disabled { opacity: .45; cursor: default; }
+.jv-note { margin: 0; padding: 2px 16px 10px; font-size: 11px; color: var(--encre-3); text-align: center; }
+@media (max-width: 560px) {
+  .jv-bouton { right: 14px; bottom: 14px; } .jv-bouton-txt { display: none; } .jv-bouton { padding: 0 14px; }
+  .jv-panneau { right: 8px; left: 8px; width: auto; bottom: 72px; height: min(560px, calc(100vh - 90px)); }
+}
+@media print { .jv-bouton, .jv-panneau { display: none !important; } }
+@media (prefers-reduced-motion: reduce) { .jv-panneau, .jv-msg, .jv-points i, .jv-bouton { animation: none; transition: none; } }
+
+/* ---------- voix : micro, lecture, conversation ---------- */
+.jv-micro { position: relative; width: 40px; height: 40px; flex: none; border: 0; border-radius: 13px; display: grid; place-items: center; cursor: pointer; color: var(--encre-2); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); transition: background .2s, color .2s, transform .2s; }
+.jv-micro:hover { color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.jv-micro:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.jv-micro.ecoute { background: var(--critique); color: #fff; box-shadow: none; }
+.jv-micro.ecoute::after { content: ""; position: absolute; inset: -5px; border-radius: 17px; border: 2px solid var(--critique); opacity: .5; animation: jv-ecoute 1.3s ease-out infinite; }
+.jv-micro.parle { background: var(--encre); color: var(--surface); box-shadow: none; }
+@keyframes jv-ecoute { from { transform: scale(.92); opacity: .6; } to { transform: scale(1.18); opacity: 0; } }
+.jv-icone[aria-pressed=true] { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); }
+.jv-panneau.jv-vocal .jv-champ { border-color: var(--accent); background: var(--surface); }
+@media (prefers-reduced-motion: reduce) { .jv-micro.ecoute::after { animation: none; } }
+
+.jv-aide { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--accent); font-weight: 600; }
+
+/* ---------- mode vocal : l'orbe en plein panneau (écran sombre, turquoise) ---------- */
+.jv-panneau { transition: opacity .22s cubic-bezier(.16, 1, .3, 1), transform .22s cubic-bezier(.16, 1, .3, 1), width .35s cubic-bezier(.16, 1, .3, 1), height .35s cubic-bezier(.16, 1, .3, 1); }
+.jv-panneau.jv-voix-on { width: min(440px, calc(100vw - 24px)); height: min(780px, calc(100vh - 100px)); background: #010708; box-shadow: 0 0 0 1px rgba(60, 220, 205, .22), 0 30px 80px -20px rgba(0, 0, 0, .75), 0 0 60px -10px rgba(40, 200, 190, .25); }
+.jv-scene { position: absolute; inset: 0; z-index: 5; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; background: radial-gradient(70% 55% at 50% 42%, #052224 0%, #010a0b 62%, #010708 100%); color: #d6fbf7; animation: jv-scene-entre .5s cubic-bezier(.16, 1, .3, 1) both; }
+.jv-scene[hidden] { display: none; }
+@keyframes jv-scene-entre { from { opacity: 0; } }
+.jv-sc-tete { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0; }
+.jv-sc-retour { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px 6px 6px; border: 0; border-radius: 10px; background: transparent; color: #7fd8cf; font: 600 13px var(--police); cursor: pointer; }
+.jv-sc-retour:hover { background: rgba(60, 220, 205, .1); color: #d6fbf7; }
+.jv-sc-nom { font: 800 15px var(--titre); letter-spacing: .32em; text-transform: uppercase; color: #5fd0c6; padding-right: 8px; }
+.jv-sc-orbe { position: relative; min-height: 0; }
+.jv-orbe { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.jv-sc-texte { padding: 0 24px; text-align: center; display: grid; gap: 8px; justify-items: center; min-height: 92px; }
+.jv-sc-statut { font: 700 22px/1.15 var(--titre); letter-spacing: -.01em; color: #eafffd; text-shadow: 0 0 24px rgba(60, 230, 215, .55); transition: color .3s; }
+.jv-scene[data-etat=ecoute] .jv-sc-statut { color: #8ff5ea; }
+.jv-scene[data-etat=reflexion] .jv-sc-statut { animation: jv-respire 1.4s ease-in-out infinite; }
+@keyframes jv-respire { 50% { opacity: .55; } }
+.jv-sc-legende { margin: 0; max-width: 34ch; font-size: 14px; line-height: 1.5; color: #8fd0c9; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.jv-sc-actions { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 14px 16px 26px; }
+.jv-sc-micro { position: relative; width: 66px; height: 66px; border-radius: 50%; border: 1.5px solid rgba(90, 235, 220, .55); background: rgba(40, 200, 188, .1); color: #9ff7ee; display: grid; place-items: center; cursor: pointer; transition: transform .2s, background .2s, box-shadow .3s; box-shadow: 0 0 26px -6px rgba(60, 230, 215, .55), inset 0 0 18px rgba(60, 230, 215, .12); }
+.jv-sc-micro:hover { transform: scale(1.05); background: rgba(40, 200, 188, .2); }
+.jv-sc-micro.actif { background: rgba(60, 230, 215, .85); color: #012; box-shadow: 0 0 40px -2px rgba(60, 240, 225, .8); }
+.jv-sc-micro.actif::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid rgba(90, 240, 225, .5); animation: jv-ecoute 1.4s ease-out infinite; }
+.jv-sc-fin { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .05); color: #9cc9c5; display: grid; place-items: center; cursor: pointer; }
+.jv-sc-fin:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+.jv-sc-micro:focus-visible, .jv-sc-fin:focus-visible, .jv-sc-retour:focus-visible { outline: 2px solid #5fe8dc; outline-offset: 3px; }
+@media (max-width: 560px) {
+  .jv-panneau.jv-voix-on { inset: 0; width: auto; height: auto; border-radius: 0; bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .jv-scene, .jv-sc-statut, .jv-sc-micro.actif::after { animation: none; } }
+
+/* ---- Jarvis : tableaux, historique, vue étendue ---- */
+.jv-table { margin-top: 8px; overflow-x: auto; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-msg .jv-table:first-child { margin-top: 0; }
+.jv-table table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.jv-table th, .jv-table td { padding: 6px 9px; text-align: left; border-bottom: 1px solid var(--trait); white-space: nowrap; }
+.jv-table th { font-weight: 650; color: var(--encre-2); background: var(--surface); position: sticky; top: 0; }
+.jv-table tr:last-child td { border-bottom: 0; }
+.jv-histo { display: grid; gap: 6px; align-content: start; }
+.jv-histo-tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.jv-histo-ligne { display: flex; align-items: center; gap: 6px; }
+.jv-histo-ouvrir { flex: 1; min-width: 0; display: grid; gap: 2px; text-align: left; padding: 9px 12px; border: 0; border-radius: 12px; cursor: pointer; font: 600 13px var(--police); color: var(--encre); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-histo-ouvrir:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.jv-histo-ouvrir span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jv-histo-ouvrir small { font-weight: 500; color: var(--encre-3); }
+.jv-panneau.jv-large { width: min(760px, calc(100vw - 44px)); height: min(820px, calc(100vh - 110px)); }
+.jv-panneau.jv-large .jv-msg { max-width: 82%; }
+.jv-panneau.jv-large .jv-table th, .jv-panneau.jv-large .jv-table td { white-space: normal; }
+.jv-flux::after { content: ''; display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: -2px; background: var(--accent); border-radius: 2px; animation: jv-curseur 1s steps(2) infinite; }
+@keyframes jv-curseur { 50% { opacity: 0; } }
+@media (max-width: 560px) { .jv-panneau.jv-large { width: auto; height: min(560px, calc(100vh - 90px)); } }
+@media (prefers-reduced-motion: reduce) { .jv-flux::after { animation: none; } }
+
+/* ---- Jarvis : logo ---- */
+.jv-logo { background: transparent; box-shadow: none; overflow: hidden; border-radius: 11px; }
+.jv-logo img { width: 100%; height: 100%; display: block; }
+.jv-accueil .jv-logo { width: 64px; height: 64px; border-radius: 18px; }
+.jv-bouton img { display: block; flex: none; margin-left: -2px; }
+
+/* ---- Jarvis : cartes d'action (confirmation avant toute modification) ---- */
+.jv-carte { align-self: stretch; display: grid; gap: 10px; padding: 12px 14px; border-radius: 16px; background: var(--surface); box-shadow: 0 0 0 1.5px var(--accent), 0 10px 26px -14px rgba(11, 20, 48, .35); animation: jv-entre .3s cubic-bezier(.16, 1, .3, 1) both; outline: none; }
+.jv-carte.sensible { box-shadow: 0 0 0 1.5px #e0a100, 0 10px 26px -14px rgba(11, 20, 48, .35); }
+.jv-carte header { display: flex; gap: 10px; align-items: flex-start; }
+.jv-carte header > span { flex: none; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: var(--accent); }
+.jv-carte.sensible header > span { background: #e0a100; }
+.jv-carte header small { display: block; font-size: 11.5px; color: var(--encre-3); }
+.jv-carte header b { font-size: 14px; line-height: 1.3; }
+.jv-carte dl { margin: 0; display: grid; gap: 4px; font-size: 13px; }
+.jv-carte dl div { display: flex; gap: 8px; justify-content: space-between; }
+.jv-carte dt { color: var(--encre-3); flex: none; } .jv-carte dd { margin: 0; text-align: right; font-weight: 600; }
+.jv-carte dl .attention dd { color: #b45309; }
+.jv-carte-label { display: grid; gap: 4px; font-size: 12px; color: var(--encre-3); }
+.jv-carte-texte { width: 100%; resize: vertical; min-height: 64px; max-height: 220px; padding: 9px 11px; border-radius: 12px; border: 1px solid var(--trait-fort); background: var(--surface-2); font: 13.5px/1.45 var(--police); color: var(--encre); box-sizing: border-box; }
+.jv-carte-texte:focus { outline: none; border-color: var(--accent); box-shadow: var(--anneau); background: var(--surface); }
+.jv-carte footer { display: flex; justify-content: flex-end; gap: 8px; }
+.jv-carte footer button { height: 34px; padding: 0 14px; border: 0; border-radius: 10px; cursor: pointer; font: 650 13px var(--police); display: inline-flex; align-items: center; gap: 6px; }
+.jv-carte-refuser { color: var(--encre); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-carte-ok { color: #fff; background: var(--accent); } .jv-carte.sensible .jv-carte-ok { background: #c98a00; }
+.jv-carte button:disabled { opacity: .55; cursor: default; }
+.jv-carte-etat { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--encre-2); }
+.jv-carte.close { box-shadow: 0 0 0 1px var(--trait); }
+.jv-carte.close.ok .jv-carte-etat { color: #0f8a5f; } .jv-carte.close.refuse .jv-carte-etat { color: var(--encre-3); }
+.jv-carte.close.attention .jv-carte-etat { color: #b45309; } .jv-carte.close.erreur .jv-carte-etat { color: #c0392b; }
+.jv-carte.brouillon { box-shadow: 0 0 0 1px var(--trait-fort); } .jv-carte.brouillon header > span { background: var(--encre-2, #44506d); }
+
+/* ---- Jarvis : briefing du jour, pastille d'alerte, commande Ctrl+K ---- */
+.jv-bouton { position: fixed; }
+.jv-pastille { position: absolute; top: -5px; right: -3px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center; font: 700 11px var(--police); color: #fff; background: #e5484d; box-shadow: 0 0 0 2px var(--surface); animation: jv-pouls 2.4s ease-in-out infinite; }
+.jv-pastille[hidden] { display: none; }
+@keyframes jv-pouls { 50% { transform: scale(1.12); } }
+.jv-brief { align-self: stretch; margin-top: 10px; border-radius: 16px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); overflow: hidden; }
+.jv-brief header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px 7px; font-size: 13px; text-transform: capitalize; }
+.jv-brief ul { list-style: none; margin: 0; padding: 0 6px 6px; display: grid; gap: 2px; }
+.jv-brief li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 7px 6px; border-radius: 10px; }
+.jv-brief li:hover { background: var(--surface); }
+.jv-brief-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: var(--encre-2); background: var(--surface); box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-brief li.critique .jv-brief-ic { color: #fff; background: #e5484d; box-shadow: none; } .jv-brief li.important .jv-brief-ic { color: #fff; background: #e0a100; box-shadow: none; }
+.jv-brief-txt { min-width: 0; display: grid; } .jv-brief-txt b { font-size: 12.8px; line-height: 1.3; } .jv-brief-txt small { color: var(--encre-3); font-size: 11.5px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jv-brief-act { display: flex; gap: 8px; align-items: center; }
+.jv-brief-act button { height: 28px; padding: 0 11px; border: 0; border-radius: 8px; cursor: pointer; font: 650 12px var(--police); color: #fff; background: var(--accent); }
+.jv-brief-act a { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; } .jv-brief-act a:hover { text-decoration: underline; }
+.jv-cmd { position: fixed; inset: 0; z-index: 9960; display: grid; justify-items: center; align-content: start; padding: 14vh 16px 0; background: rgba(6, 11, 20, .42); backdrop-filter: blur(3px); animation: jv-entre .2s ease both; }
+.jv-cmd-boite { width: min(620px, 100%); border-radius: 20px; background: var(--surface); color: var(--encre); box-shadow: 0 0 0 1px var(--trait), 0 40px 90px -24px rgba(6, 11, 20, .6); overflow: hidden; }
+.jv-cmd-tete { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--trait); }
+.jv-cmd-tete img { border-radius: 8px; flex: none; }
+.jv-cmd-champ { flex: 1; border: 0; outline: none; background: transparent; font: 500 16px var(--police); color: var(--encre); min-width: 0; }
+.jv-cmd-tete kbd { font: 600 11px var(--police); padding: 3px 8px; border-radius: 7px; color: var(--encre-3); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-cmd-liste { list-style: none; margin: 0; padding: 6px; display: grid; gap: 2px; max-height: 50vh; overflow-y: auto; }
+.jv-cmd-liste li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; cursor: pointer; font-size: 14px; }
+.jv-cmd-liste li svg { flex: none; color: var(--accent); } .jv-cmd-liste li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jv-cmd-liste li.actif, .jv-cmd-liste li:hover { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--accent); }
+@media (prefers-reduced-motion: reduce) { .jv-pastille { animation: none; } }
+
+.jv-accueil { gap: 6px; }
+.jv-accueil .jv-logo { width: 48px; height: 48px; border-radius: 14px; }
+.jv-tete small { white-space: nowrap; }
+.jv-journal > * { min-width: 0; max-width: 100%; }
+.jv-accueil, .jv-brief { width: 100%; box-sizing: border-box; }
+.jv-brief li { min-width: 0; }
+.jv-panneau { grid-template-columns: minmax(0, 1fr); }
+.jv-tete > div { min-width: 0; flex: 1; }
+.jv-tete small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.jv-onglets { display: flex; gap: 4px; padding: 3px; border-radius: 12px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--trait); }
+.jv-onglets button { border: 0; padding: 6px 12px; border-radius: 9px; cursor: pointer; font: 650 12.5px var(--police); color: var(--encre-2); background: transparent; }
+.jv-onglets button[aria-selected=true] { color: var(--encre); background: var(--surface); box-shadow: 0 1px 3px rgba(11, 20, 48, .12); }
+.jv-souvenir { cursor: default; } .jv-souvenir:hover { box-shadow: inset 0 0 0 1px var(--trait); }
+
+/* ---- Rapport d'activité imprimable ---- */
+.jr-racine { position: fixed; inset: 0; z-index: 9965; overflow: auto; background: #e9eef8; outline: none; animation: jv-entre .25s ease both; }
+.jr-barre-outils { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 20px; background: #060b14; color: #fff; }
+.jr-barre-outils > div { display: flex; gap: 8px; }
+.jr-btn { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 16px; border: 0; border-radius: 10px; cursor: pointer; font: 650 13px var(--police); color: #fff; background: #1f5cff; }
+.jr-btn.clair { color: #0b1430; background: #fff; }
+.jr-feuille { width: min(900px, calc(100% - 24px)); margin: 20px auto 40px; padding: 36px 40px; border-radius: 12px; background: #fff; color: #0b1430; box-shadow: 0 20px 60px -24px rgba(6, 11, 20, .4); font-family: var(--police); }
+.jr-tete { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; border-bottom: 2px solid #0b1430; }
+.jr-tete h2 { margin: 0; font-size: 24px; letter-spacing: -.02em; } .jr-tete p { margin: 4px 0 0; font-size: 13px; color: #53607d; } .jr-tete > div { flex: 1; }
+.jr-marque { font: 800 18px var(--police); letter-spacing: -.02em; color: #1f5cff; }
+.jr-bloc { margin-top: 24px; break-inside: avoid; } .jr-bloc h3 { margin: 0 0 10px; font-size: 15px; letter-spacing: -.01em; }
+.jr-points { margin: 0; padding-left: 20px; display: grid; gap: 5px; font-size: 14px; line-height: 1.45; }
+.jr-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.jr-kpi { display: grid; gap: 3px; padding: 12px 14px; border-radius: 12px; background: #f3f6fc; box-shadow: inset 0 0 0 1px #dfe6f5; }
+.jr-kpi small { font-size: 11.5px; color: #53607d; } .jr-kpi b { font-size: 20px; letter-spacing: -.02em; } .jr-var { font-size: 11px; color: #53607d; } .jr-var.haut { color: #0f8a5f; } .jr-var.bas { color: #c0392b; }
+.jr-graphes { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+.jr-barres { display: grid; gap: 7px; font-size: 12.5px; } .jr-barre { display: grid; grid-template-columns: 120px 1fr 78px; gap: 8px; align-items: center; }
+.jr-piste { height: 12px; border-radius: 6px; background: #eef2fb; overflow: hidden; } .jr-piste i { display: block; height: 100%; border-radius: 6px; } .jr-piste i.actuel { background: linear-gradient(90deg, #1f5cff, #2ee0d1); } .jr-piste i.avant { background: #a9b6d3; }
+.jr-barre em { font-style: normal; font-weight: 650; text-align: right; }
+.jr-bloc table { width: 100%; border-collapse: collapse; font-size: 12.5px; } .jr-bloc th { text-align: left; padding: 6px 8px; color: #53607d; font-weight: 650; border-bottom: 1.5px solid #cfd8ec; } .jr-bloc td { padding: 6px 8px; border-bottom: 1px solid #e6ebf6; vertical-align: top; }
+.jr-vide { margin: 0; font-size: 13px; color: #53607d; } .jr-pied { margin: 26px 0 0; padding-top: 12px; border-top: 1px solid #e6ebf6; font-size: 11.5px; color: #7a86a3; }
+@media (max-width: 700px) { .jr-feuille { padding: 22px 18px; } .jr-kpis { grid-template-columns: repeat(2, 1fr); } .jr-graphes { grid-template-columns: 1fr; } }
+@media print {
+  html.jr-ouvert body > *:not(.jr-racine) { display: none !important; }
+  html.jr-ouvert .jr-racine { position: static; overflow: visible; background: #fff; animation: none; }
+  .jr-barre-outils { display: none; } .jr-feuille { width: 100%; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+  .jr-kpi, .jr-piste { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .jr-piste i { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+.jv-brief-rapport { display: flex; gap: 8px; margin: 0; padding: 0 12px 8px; } .jv-brief-rapport button { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; border: 0; border-radius: 8px; cursor: pointer; font: 650 12px var(--police); color: var(--encre); background: var(--surface); box-shadow: inset 0 0 0 1px var(--trait-fort); }
+
+/* ---- page « Assistant IA » de l'admin ---- */
+.iap { display: grid; gap: 18px; margin-top: 18px; }
+.iap-barres { display: flex; align-items: flex-end; gap: 10px; height: 150px; padding-top: 22px; }
+.iap-col { flex: 1; display: grid; justify-items: center; align-content: end; gap: 4px; height: 100%; min-width: 0; }
+.iap-val { font-size: 10.5px; color: var(--encre-3); height: 14px; white-space: nowrap; }
+.iap-pile { width: min(46px, 70%); display: flex; flex-direction: column; border-radius: 8px 8px 3px 3px; overflow: hidden; background: var(--surface-2); min-height: 0; }
+.iap-pile i { display: block; min-height: 0; } .iap-pile i.entree, .iap-leg.entree { background: var(--serie-1, #1f5cff); } .iap-pile i.sortie, .iap-leg.sortie { background: var(--serie-2, #2ee0d1); }
+.iap-jour { font-size: 11px; color: var(--encre-3); }
+.iap-leg { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: -1px; }
+
+/* ---- Rapport : identité Creatigo (couverture, pied de page, A4) ---- */
+.jr-couv { margin: -36px -40px 8px; padding: 26px 40px 28px; border-radius: 12px 12px 0 0; color: #fff; background: radial-gradient(120% 140% at 100% 0%, rgba(46, 224, 209, .35), transparent 55%), linear-gradient(135deg, #0b1430 0%, #1f5cff 120%); }
+.jr-couv-haut { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+.jr-logo { display: inline-flex; align-items: center; gap: 10px; } .jr-logo img { background: #fff; border-radius: 10px; padding: 3px; } .jr-logo b { font: 800 22px var(--police); letter-spacing: -.03em; } .jr-logo em { font-style: normal; color: #2ee0d1; }
+.jr-conf { font: 650 11px var(--police); letter-spacing: .08em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .14); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.jr-couv h2 { margin: 0; font: 800 32px/1.1 var(--police); letter-spacing: -.03em; } .jr-periode { margin: 10px 0 0; font-size: 17px; font-weight: 600; } .jr-compare { margin: 4px 0 0; font-size: 12.5px; opacity: .8; }
+.jr-bloc h3 { display: flex; align-items: center; gap: 9px; } .jr-bloc h3::before { content: ''; width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(#1f5cff, #2ee0d1); }
+.jr-bloc tbody tr:nth-child(even) td { background: #f7f9fe; }
+.jr-pile { display: flex; height: 18px; border-radius: 9px; overflow: hidden; background: #eef2fb; } .jr-pile i { display: block; min-width: 4px; }
+.jr-pile .a0, .jr-pt.a0 { background: #a9b6d3; } .jr-pile .a1, .jr-pt.a1 { background: #2ee0d1; } .jr-pile .a2, .jr-pt.a2 { background: #e0a100; } .jr-pile .a3, .jr-pt.a3 { background: #e5484d; }
+.jr-legende { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; } .jr-pt { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+@page { size: A4; margin: 12mm 11mm 16mm; @bottom-left { content: 'Creatigo · Rapport d’activité · Confidentiel'; font: 9pt Inter, Arial, sans-serif; color: #7a86a3; } @bottom-right { content: 'Page ' counter(page) ' / ' counter(pages); font: 9pt Inter, Arial, sans-serif; color: #7a86a3; } }
+@media print { .jr-couv, .jr-pile i, .jr-pt, .jr-bloc h3::before, .jr-bloc tbody tr:nth-child(even) td { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .jr-couv { margin: 0 0 8px; border-radius: 10px; } .jr-bloc { break-inside: avoid; } }
+.jr-feuille .jr-couv h2 { font-size: 32px !important; line-height: 1.1 !important; letter-spacing: -.03em; color: #fff; margin: 0 !important; }
+.jr-feuille .jr-couv .jr-periode { font-size: 17px; }
+.jv-note-alerte { color: #b45309; font-weight: 600; }

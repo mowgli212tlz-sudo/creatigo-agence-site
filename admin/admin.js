@@ -5,9 +5,9 @@
   var S = window.CreatigoStore
   var CODE = 'creatigo' // à changer
   var main = document.getElementById('main'), menu = document.getElementById('menu')
-  var VUES = [['dashboard', 'Tableau de bord', 'Pilotage'], ['clients', 'Clients', 'Relation client'], ['demandes', 'Demandes clients', 'Relation client'], ['rdv', 'Rendez-vous', 'Relation client'], ['devis', 'Devis', 'Ventes'], ['factures', 'Factures', 'Ventes'], ['catalogue', 'Catalogue & tarifs', 'Ventes'], ['projets', 'Projets', 'Production'], ['site', 'Site & messages', 'Site'], ['donnees', 'Données', 'Système'], ['equipe', 'Équipe & accès', 'Système'], ['journal', 'Journal & corbeille', 'Système']]
+  var VUES = [['dashboard', 'Tableau de bord', 'Pilotage'], ['cockpit', 'Cockpit', 'Pilotage'], ['pipeline', 'Pipeline commercial', 'Relation client'], ['clients', 'Clients', 'Relation client'], ['messages', 'Messagerie', 'Relation client'], ['demandes', 'Demandes clients', 'Relation client'], ['rdv', 'Rendez-vous', 'Relation client'], ['devis', 'Devis', 'Ventes'], ['factures', 'Factures', 'Ventes'], ['catalogue', 'Catalogue & tarifs', 'Ventes'], ['finances', 'Centre financier', 'Ventes'], ['projets', 'Projets', 'Production'], ['studio', 'Studio de validation', 'Production'], ['site', 'Site & messages', 'Site'], ['donnees', 'Données', 'Système'], ['ia', 'Assistant IA', 'Système'], ['equipe', 'Équipe & accès', 'Système'], ['journal', 'Journal & corbeille', 'Système']]
 
-  var ICO = { dashboard: 'layout-dashboard', clients: 'users', demandes: 'mail', rdv: 'calendar-days', devis: 'file-text', factures: 'receipt-text', projets: 'rocket', site: 'globe', catalogue: 'shopping-cart', donnees: 'server', equipe: 'users', journal: 'clock' }
+  var ICO = { dashboard: 'layout-dashboard', cockpit: 'gauge', pipeline: 'trending-up', finances: 'wallet', messages: 'message-circle', studio: 'palette', clients: 'users', demandes: 'mail', rdv: 'calendar-days', devis: 'file-text', factures: 'receipt-text', projets: 'rocket', site: 'globe', catalogue: 'shopping-cart', donnees: 'server', equipe: 'users', journal: 'clock', ia: 'sparkles' }
   function el(t, a, kids) {
     var e = document.createElement(t)
     for (var k in a || {}) {
@@ -24,7 +24,7 @@
   function clear() { main.textContent = '' }
   function go(h) { location.hash = h }
 
-  window.AdminKit = { S: S, el: el, field: field, date: date, go: go, main: main, route: function () { route() } }
+  window.AdminKit = { S: S, el: el, field: field, date: date, go: go, main: main, role: function () { return ROLE }, route: function () { route() } }
   // rôle de la personne connectée (donné par la base) : sert à masquer les vues inutiles ; la base refuse de toute façon les données interdites
   var ROLE = 'super_admin'
   function masque() { var M = window.AdminModules || {}; return (M.MASQUE && M.MASQUE[ROLE]) || [] }
@@ -90,7 +90,7 @@
     document.getElementById('app').classList.remove('menu-ouvert'); cloche()
     clear(); main.setAttribute('data-vue', v); document.documentElement.dataset.route = v
     ;var M = window.AdminModules || {}
-    ;({ dashboard: dashboard, devis: h[1] ? function () { return fiche(h[1]) } : liste, catalogue: catalogue, clients: function () { return M.clients(h[1]) }, demandes: function () { return M.demandes(h[1]) }, rdv: function () { return M.rdv(h[1]) }, factures: function () { return M.factures(h[1]) }, projets: function () { return M.projets(h[1]) }, site: function () { return M.site(h[1], h[2]) }, donnees: donnees, equipe: function () { return M.equipe() }, journal: function () { return M.journal() }, refuse: refuse }[v] || dashboard)()
+    ;({ dashboard: dashboard, cockpit: function () { return M.cockpit() }, finances: function () { return M.finances(h[1], h[2]) }, studio: function () { return M.studio(h[1]) }, messages: function () { return M.messagerie(h[1], h[2]) }, pipeline: function () { return M.pipeline() }, devis: h[1] ? function () { return fiche(h[1]) } : liste, catalogue: catalogue, clients: function () { return M.clients(h[1]) }, demandes: function () { return M.demandes(h[1]) }, rdv: function () { return M.rdv(h[1]) }, factures: function () { return M.factures(h[1]) }, projets: function () { return M.projets(h[1]) }, site: function () { return M.site(h[1], h[2]) }, donnees: donnees, ia: function () { return M.ia() }, equipe: function () { return M.equipe() }, journal: function () { return M.journal() }, refuse: refuse }[v] || dashboard)()
     main.focus()
   }
   function refuse() { document.getElementById('titre-page').textContent = 'Accès réservé'; main.appendChild(el('h1', { text: 'Accès réservé' })); main.appendChild(el('p', { class: 'lead', text: 'Cette partie est réservée à la direction. Demandez à un super administrateur si vous en avez besoin.' })) }
@@ -186,7 +186,8 @@
         function row(a, b, c) { totbox.appendChild(el('div', { class: c || '' }, [el('span', { text: a }), el('b', { text: b })])) }
         row('Total brut HT', S.eur(t.brutHT))
         if (t.remiseMontant) row('Remise ' + d.remise + ' %', '− ' + S.eur(t.remiseMontant))
-        row('Ponctuel HT', S.eur(t.uniqueHT)); row('Ponctuel TTC (TVA ' + Math.round(S.TVA * 100) + ' %)', S.eur(t.uniqueTTC), 'big')
+        row('Ponctuel HT', S.eur(t.uniqueHT)); row(t.tauxTVA ? 'Ponctuel TTC (TVA ' + Math.round(t.tauxTVA * 100) + ' %)' : 'Ponctuel (TVA non applicable)', S.eur(t.uniqueTTC), 'big')
+        if (t.optionsHT) row('Options proposées (non comptées)', S.eur(t.optionsHT))
         if (t.mensuelHT) { row('Mensuel HT', S.eur(t.mensuelHT)); row('Mensuel TTC', S.eur(t.mensuelTTC), 'big') }
       }
       function lignes() {
@@ -231,6 +232,8 @@
       ]))
       main.appendChild(msg)
       lignes(); totaux()
+      // conditions, options, partage avec le client, acceptation, contrat, PDF (admin/finances.js)
+      if (window.AdminModules.devisExtra) window.AdminModules.devisExtra(d, main, save, { statut: function (v) { stat.value = v }, totaux: function () { lignes(); totaux() } })
     })
   }
 

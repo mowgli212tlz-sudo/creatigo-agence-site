@@ -14,7 +14,7 @@
   var BLOG_ST = [['idee', 'Idée'], ['redaction', 'Rédaction'], ['relecture', 'Relecture'], ['publie', 'Publié']]
   var lab = function (t, v) { var r = t.filter(function (x) { return x[0] === v })[0]; return r ? r[1] : v || '—' }
 
-  function ttc(f) { var t = window.AdminKit.S.calc(f); return (t.uniqueHT + t.mensuelHT) * (1 + window.AdminKit.S.TVA) }
+  function ttc(f) { var t = window.AdminKit.S.calc(f); return t.uniqueTTC + t.mensuelTTC }   // tient compte de la TVA non applicable
   function pill(t, v) { return K().el('span', { class: 'badge b-' + v, text: lab(t, v) }) }
   function tbl(heads, rows, vide) {
     var e = K().el
@@ -104,6 +104,7 @@
     var e = K().el, S = K().S, main = K().main
     if (id) return fiche('clients', id, 'Fiche client', F_CLIENT, 'clients', function (c, box) {
       if (!c.id) return
+      if (window.AdminModules.crmBloc) window.AdminModules.crmBloc(c, box)   // suivi commercial et historique des échanges (crm.js)
       Promise.all([S.devisList(), S.list('rdv'), S.list('factures'), S.list('projets')]).then(function (r) {
         var mail = (c.email || '').toLowerCase()
         var dv = r[0].filter(function (d) { return mail && ((d.client || {}).email || '').toLowerCase() === mail })
@@ -246,7 +247,7 @@
       function totaux() {
         f.remise = +rem.value || 0; var t = S.calc(f); tot.textContent = ''
         function row(a, b, c) { tot.appendChild(e('div', { class: c || '' }, [e('span', { text: a }), e('b', { text: b })])) }
-        row('Total HT', S.eur(t.uniqueHT + t.mensuelHT)); row('TVA ' + Math.round(S.TVA * 100) + ' %', S.eur((t.uniqueHT + t.mensuelHT) * S.TVA)); row('Total TTC', S.eur((t.uniqueHT + t.mensuelHT) * (1 + S.TVA)), 'big')
+        row('Total HT', S.eur(t.uniqueHT + t.mensuelHT)); if (t.tauxTVA) row('TVA ' + Math.round(t.tauxTVA * 100) + ' %', S.eur((t.uniqueHT + t.mensuelHT) * t.tauxTVA)); else row('TVA non applicable, art. 293 B du CGI', '—'); row('Total TTC', S.eur(t.uniqueTTC + t.mensuelTTC), 'big')
       }
       function lignes() {
         lb.textContent = ''
@@ -280,6 +281,8 @@
         btn('Marquer payée', function () { stat.value = 'payee'; save() }, 'btn ghost'),
         btn('Supprimer', function () { if (confirm('Supprimer la facture ' + f.ref + ' ?')) S.del('factures', f.id).then(function () { K().go('factures') }) }, 'btn ghost')]))
       main.appendChild(msg); lignes(); totaux()
+      // type, TVA, paiements, échéancier, avoir, envoi au client, PDF (admin/finances.js)
+      if (window.AdminModules.factureExtra) window.AdminModules.factureExtra(f, main, save, { statut: function (v) { stat.value = v }, totaux: function () { lignes(); totaux() } })
     })
   }
 
@@ -402,6 +405,9 @@
     rd.filter(function (x) { return x.statut === 'avenir' && (x.date === t || x.date === plus(1)) }).forEach(function (x) { todo.push({ ic: 'calendar-days', h: '#rdv/' + x.id, t: 'Rendez-vous ' + (x.date === t ? 'aujourd’hui' : 'demain') + ' à ' + (x.heure || '—') + (nomC(x.clientId) || x.nom ? ' avec ' + (nomC(x.clientId) || x.nom) : '') }) })
     fa.filter(function (f) { return (f.statut === 'envoyee' || f.statut === 'retard') && f.echeance && f.echeance < t }).forEach(function (f) { todo.push({ ic: 'receipt-text', h: '#factures/' + f.id, t: 'Facture ' + f.ref + ' en retard (' + nomClient(f.client) + ')', warn: 1 }) })
     cl.filter(function (c) { return c.rappel && c.rappel <= t }).forEach(function (c) { todo.push({ ic: 'bell', h: '#clients/' + c.id, t: 'Relancer ' + nomClient(c) }) })
+    // prospects en cours sans aucun échange depuis 14 jours (crm.js)
+    var CRM = window.AdminModules && window.AdminModules.CRM
+    if (CRM) cl.filter(function (c) { return CRM.sansActivite(c) && !(c.rappel && c.rappel <= t) }).slice(0, 3).forEach(function (c) { todo.push({ ic: 'clock', h: '#clients/' + c.id, t: nomClient(c) + ' : aucun échange depuis ' + Math.round((Date.parse(t) - Date.parse(CRM.derniereActivite(c))) / 864e5) + ' jours' }) })
     ms.filter(function (m) { return m.traite !== 'oui' }).slice(0, 3).forEach(function (m) { todo.push({ ic: 'mail', h: '#site/message/' + m.id, t: 'Répondre à ' + (m.nom || m.email || 'un message') }) })
     dv.filter(function (d) { return d.statut === 'nouveau' }).slice(0, 3).forEach(function (d) { todo.push({ ic: 'file-text', h: '#devis/' + d.id, t: 'Chiffrer la demande ' + d.ref }) })
     dv.filter(function (d) { return d.statut === 'envoye' && d.creeLe && (Date.now() - new Date(d.creeLe)) > 7 * 864e5 }).slice(0, 2).forEach(function (d) { todo.push({ ic: 'clock', h: '#devis/' + d.id, t: 'Devis ' + d.ref + ' sans réponse depuis plus de 7 jours' }) })

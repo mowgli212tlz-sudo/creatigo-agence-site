@@ -9,7 +9,7 @@
   if (!UI) { root.textContent = 'L’espace client n’a pas pu se charger. Rechargez la page.'; return }
   var h = UI.h, ic = UI.icone, G = UI.G
   var ETAPES = UI.PHASES.map(function (x) { return x.nom })
-  var STATUTS = { ouverte: ['Ouverte', 'info'], en_cours: ['En cours', 'attention'], terminee: ['Terminée', 'bon'] }
+  var STATUTS = { ouverte: ['Ouverte', 'info'], en_cours: ['En cours', 'attention'], attente_client: ['En attente de votre réponse', 'critique'], resolue: ['Résolue', 'bon'], terminee: ['Fermée', 'neutre'] }
   var enc = encodeURIComponent
   var acc = null   // { client_id, nom }
 
@@ -165,14 +165,17 @@
   /* ---------- coquille : menu latéral + barre du haut, dessinée une fois ---------- */
   // navigation de l'espace client : une seule liste, sans titres de section
   var PAGES = [
-    { r: 'projet', l: 'Mon projet', ic: 'layout-dashboard' },
+    { r: 'accueil', l: 'Accueil', ic: 'layout-dashboard' },
+    { r: 'projet', l: 'Mon projet', ic: 'rocket' },
+    { r: 'studio', l: 'Validation', ic: 'palette' },
+    { r: 'messages', l: 'Messages', ic: 'message-circle' },
     { r: 'documents', l: 'Mes documents', ic: 'folder' },
-    { r: 'echanges', l: 'Mes échanges', ic: 'message-square', pastille: true },
+    { r: 'echanges', l: 'Support', ic: 'headset', pastille: true },
     { r: 'facturation', l: 'Facturation', ic: 'receipt-text' },
     { r: 'parametres', l: 'Paramètres', ic: 'settings' },
   ]
   // anciennes adresses (liens déjà envoyés, favoris) -> page de la nouvelle navigation
-  var ALIAS = { accueil: 'projet', projets: 'projet', demandes: 'echanges', demande: 'echanges', nouvelle: 'echanges' }
+  var ALIAS = { livrable: 'studio', projets: 'projet', demandes: 'echanges', demande: 'echanges', nouvelle: 'echanges' }
   var cache = null   // données lues une fois par affichage (projets, demandes, nouvelles)
   function lire(force) {
     if (cache && !force) return cache
@@ -201,6 +204,8 @@
           h('a', { class: 'btn petit', href: '#nouvelle' }, 'Écrire à l’équipe', ic('arrow-right', 14))),
         h('div', { class: 'barre-pied' },
           h('a', { class: 'profil', href: '../', title: 'Retour au site' }, h('span', { class: 'avatar nuit', 'aria-hidden': 'true' }, initiales(acc.nom)), h('div', {}, h('div', { class: 'nom' }, acc.nom || 'Mon espace'), h('div', { class: 'role' }, 'Client'))),
+          // visible seulement pour un membre de l'équipe (la base répond is_admin) : un client ne voit jamais ce lien
+          (function () { var a = h('a', { class: 'btn-nuit', href: '../admin/', hidden: true, title: 'Ouvrir l’espace administrateur' }, ic('layout-dashboard', 16), h('span', { class: 'nav-texte' }, 'Espace admin')); S.auth.isAdmin().then(function (ok) { a.hidden = !ok }); return a })(),
           h('button', { class: 'btn-nuit', type: 'button', onclick: function () { cache = null; S.auth.signOut().then(login) } }, ic('log-out', 16), h('span', { class: 'nav-texte' }, 'Se déconnecter')))),
       h('div', { class: 'colonne' },
         h('header', { class: 'haut-barre' },
@@ -250,7 +255,7 @@
     lire().then(function (d) {
       var n = d.nouvelles.filter(function (u) { return u.kind === 'attendu' && !u.fait }).length
       point.hidden = !n; point.textContent = String(n); bouton.classList.toggle('a-traiter', n > 0)
-      var ouvertes = d.demandes.filter(function (q) { return q.statut !== 'terminee' }).length
+      var ouvertes = d.demandes.filter(function (q) { return q.statut !== 'terminee' && q.statut !== 'resolue' }).length
       document.querySelectorAll('.pastille-alertes').forEach(function (p) { p.textContent = String(ouvertes); p.hidden = !ouvertes })
     }).catch(function () {})
     return zone
@@ -258,10 +263,10 @@
 
   /* ---------- routeur ---------- */
   function route() {
-    var parts = (location.hash || '#projet').replace(/^#/, '').split('/'), v = parts[0] || 'projet'
+    var parts = (location.hash || '#accueil').replace(/^#/, '').split('/'), v = parts[0] || 'accueil'
     var actif = ALIAS[v] || v
-    if (!PAGES.some(function (p) { return p.r === actif })) { v = actif = 'projet' }
-    if (v === 'accueil' || v === 'projets') v = 'projet'
+    if (!PAGES.some(function (p) { return p.r === actif })) { v = actif = 'accueil' }
+    if (v === 'projets') v = 'projet'
     if (v === 'demandes') v = 'echanges'
     document.querySelectorAll('#menu a').forEach(function (a) { if (a.dataset.route === actif) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current') })
     var lib = (PAGES.filter(function (p) { return p.r === actif })[0] || {}).l
@@ -271,7 +276,15 @@
     document.querySelector('.cadre').classList.remove('menu-ouvert')
     var main = document.getElementById('main'); main.setAttribute('data-vue', v)
     main.replaceChildren(h('p', { class: 'discret' }, 'Chargement…'))
-    var f = { projet: function () { return monProjet(parts[1], parts[2]) }, documents: documents, echanges: demandes, demande: function () { return fil(parts[1]) }, nouvelle: function () { return nouvelle(parts[1]) }, facturation: facturation, parametres: parametres }[v]
+    var P = window.PortailPlus   // tableau de bord, suivi détaillé, centre de support (assets/portal-plus.js)
+    var f = { accueil: function () { return P ? P.accueil(outils()) : monProjet() }, projet: function () { return monProjet(parts[1], parts[2]) }, documents: documents,
+      echanges: function () { return P ? P.support(outils()) : demandes() }, demande: function () { return P ? P.demande(outils(), parts[1]) : fil(parts[1]) }, nouvelle: function () { return P ? P.nouvelle(outils(), parts[1]) : nouvelle(parts[1]) },
+      facturation: facturation, parametres: parametres,
+      // validation des livrables, messagerie, centre documentaire (assets/portal-studio.js)
+      studio: function () { return window.PortailStudio ? window.PortailStudio.livrables(outils()) : monProjet() },
+      livrable: function () { return window.PortailStudio ? window.PortailStudio.livrable(outils(), parts[1], parts[2]) : monProjet() },
+      messages: function () { return window.PortailStudio ? window.PortailStudio.messages(outils(), parts[1]) : demandes() } }[v]
+    if (v === 'documents' && window.PortailStudio) f = function () { return window.PortailStudio.documents(outils()) }
     Promise.resolve(f()).then(function (contenu) {
       if (!contenu) return
       main.replaceChildren.apply(main, [].concat(contenu).filter(Boolean))
@@ -279,6 +292,9 @@
     }).catch(erreur(main))
   }
   addEventListener('hashchange', function () { if (acc && S.auth.session() && document.getElementById('main')) route() })
+
+  // outils passés aux modules complémentaires (portal-plus.js, portal-finances.js)
+  function outils() { return { h: h, UI: UI, S: S, ic: ic, G: G, enTetePage: enTetePage, listeDocuments: listeDocuments, telecharger: telecharger, lire: lire, route: route, acc: function () { return acc }, reinit: function () { cache = null } } }
 
   /* ---------- en-tête des pages : titre éditorial, phrase, éléments à droite ---------- */
   function enTetePage(titre, mot, sous, droite) {
@@ -468,7 +484,7 @@
 
       // petits écrans : la timeline défile ; on l'ouvre sur l'étape en cours
       setTimeout(function () { var c = timeline.querySelector('.pc-tl-etape.cours'); if (c && timeline.scrollWidth > timeline.clientWidth) timeline.scrollLeft = c.offsetLeft - 8 }, 0)
-      return [tete, choixProjet, timeline, h('div', { class: 'pc-grille' }, zone, cote), infos]
+      return [tete, choixProjet, timeline, h('div', { class: 'pc-grille' }, zone, cote), window.PortailPlus ? window.PortailPlus.etapes(p.id, outils()) : null, infos]
     })
   }
 
@@ -528,6 +544,8 @@
   }
   /* ---------- facturation : devis, contrats et factures partagés ---------- */
   function facturation() {
+    // devis à valider, contrats à signer, factures et reste à payer (assets/portal-finances.js)
+    if (window.PortailFinances) return window.PortailFinances({ h: h, UI: UI, S: S, ic: ic, enTetePage: enTetePage, listeDocuments: listeDocuments, lire: lire, route: route })
     return lire(true).then(function (d) {
       var l = d.documents.filter(function (x) { return ['devis', 'facture', 'contrat'].indexOf(x.categorie) >= 0 })
       var n = function (c) { return l.filter(function (x) { return x.categorie === c }).length }

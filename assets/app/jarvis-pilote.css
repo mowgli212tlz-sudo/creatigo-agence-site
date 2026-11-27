@@ -1,0 +1,56 @@
+/* Jarvis pilote l'écran : halo, bandeau « Jarvis travaille ici », curseur, cible, confirmation. Voir jarvis-pilote.js. */
+@property --jvp-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.jvp-racine { position: fixed; inset: 0; z-index: 9970; pointer-events: none; font-family: var(--police, 'Inter', system-ui, sans-serif); opacity: 0; transition: opacity .35s ease; }
+.jvp-racine.jvp-on { opacity: 1; }
+.jvp-racine.jvp-sortie { opacity: 0; }
+/* halo autour de toute la page : liseré bleu → turquoise qui tourne + lueur douce vers l'intérieur */
+.jvp-cadre { position: absolute; inset: 0; border: 3px solid transparent; background: conic-gradient(from var(--jvp-ang), #1f5cff, #2ee0d1, #1f5cff 50%, #2ee0d1 75%, #1f5cff) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0); mask-composite: exclude; animation: jvp-tourne 5s linear infinite; }
+.jvp-lueur { position: absolute; inset: 0; box-shadow: inset 0 0 90px 6px rgba(46, 224, 209, .2), inset 0 0 28px 2px rgba(31, 92, 255, .22); animation: jvp-respire 2.8s ease-in-out infinite; }
+@keyframes jvp-tourne { to { --jvp-ang: 360deg; } }
+@keyframes jvp-respire { 50% { opacity: .55; } }
+/* bouclier : pendant que Jarvis travaille, la page ne reçoit pas les clics de la personne (elle peut arrêter ou répondre à une demande) */
+.jvp-bouclier { position: absolute; inset: 0; pointer-events: auto; cursor: progress; background: transparent; }
+.jvp-racine.jvp-attend .jvp-bouclier { background: rgba(6, 11, 20, .18); cursor: default; }
+.jvp-pastille { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 3; pointer-events: auto; display: flex; align-items: center; gap: 10px; max-width: min(720px, calc(100vw - 24px)); padding: 7px 8px 7px 8px; border-radius: 999px;
+  background: #060b14; color: #fff; font-size: 13.5px; box-shadow: 0 0 0 1px rgba(46, 224, 209, .35), 0 14px 40px -10px rgba(0, 0, 0, .55), 0 0 30px -6px rgba(46, 224, 209, .4); animation: jvp-entre .45s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes jvp-entre { from { opacity: 0; transform: translate(-50%, -14px) scale(.96); } }
+.jvp-logo { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #1f5cff, #1aa8b8); animation: jvp-pouls 1.8s ease-in-out infinite; }
+@keyframes jvp-pouls { 50% { box-shadow: 0 0 0 6px rgba(46, 224, 209, .18); } }
+.jvp-pastille b { white-space: nowrap; font-weight: 650; }
+.jvp-etape { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255, 255, 255, .68); }
+.jvp-etape::before { content: '·'; margin-right: 8px; color: rgba(255, 255, 255, .4); }
+.jvp-stop { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border: 0; border-radius: 999px; cursor: pointer; font: 600 12.5px var(--police, inherit); color: #fff; background: rgba(255, 255, 255, .12); }
+.jvp-stop:hover { background: #e5484d; }
+.jvp-stop:focus-visible, .jvp-confirm button:focus-visible { outline: 2px solid #2ee0d1; outline-offset: 2px; }
+.jvp-stop kbd { font: 600 10.5px var(--police, inherit); padding: 2px 6px; border-radius: 6px; background: rgba(255, 255, 255, .16); }
+/* curseur de Jarvis */
+.jvp-curseur { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; will-change: transform; filter: drop-shadow(0 6px 10px rgba(6, 11, 20, .35)); }
+.jvp-curseur svg { display: block; transition: transform .12s ease; transform-origin: 3px 3px; }
+.jvp-curseur.jvp-appui svg { transform: scale(.82); }
+.jvp-curseur span { position: absolute; left: 24px; top: 24px; padding: 3px 10px; border-radius: 999px; font: 650 12px var(--police, inherit); color: #fff; white-space: nowrap; background: linear-gradient(135deg, #1f5cff, #1aa8b8); box-shadow: 0 0 0 1.5px #fff; }
+.jvp-cible { position: absolute; z-index: 1; pointer-events: none; border-radius: 10px; box-shadow: 0 0 0 2px #2ee0d1, 0 0 0 6px rgba(46, 224, 209, .22), 0 0 24px 2px rgba(46, 224, 209, .35); transition: left .35s cubic-bezier(.22, 1, .36, 1), top .35s cubic-bezier(.22, 1, .36, 1), width .35s, height .35s; animation: jvp-cible 1.6s ease-in-out infinite; }
+@keyframes jvp-cible { 50% { box-shadow: 0 0 0 2px #2ee0d1, 0 0 0 9px rgba(46, 224, 209, .1), 0 0 24px 2px rgba(46, 224, 209, .2); } }
+.jvp-cible[hidden] { display: none; }
+.jvp-onde { position: absolute; z-index: 2; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; pointer-events: none; border: 2px solid #2ee0d1; animation: jvp-onde .65s ease-out forwards; }
+@keyframes jvp-onde { to { transform: scale(5); opacity: 0; } }
+/* demande d'accord */
+.jvp-confirm { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); z-index: 4; pointer-events: auto; width: min(440px, calc(100vw - 24px)); display: grid; gap: 8px; padding: 14px 16px; border-radius: 18px; background: #fff; color: #0b1430; box-shadow: 0 0 0 1px rgba(11, 20, 48, .1), 0 24px 60px -16px rgba(6, 11, 20, .55); animation: jvp-entre .35s cubic-bezier(.16, 1, .3, 1) both; }
+.jvp-confirm[hidden] { display: none; }
+.jvp-confirm p { margin: 0; display: flex; gap: 9px; align-items: flex-start; font-weight: 650; font-size: 14.5px; line-height: 1.35; }
+.jvp-confirm p svg { flex: none; color: #1f5cff; margin-top: 1px; }
+.jvp-confirm small { color: #53607d; font-size: 12.5px; line-height: 1.4; }
+.jvp-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 2px; }
+.jvp-actions button { height: 36px; padding: 0 16px; border: 0; border-radius: 11px; cursor: pointer; font: 650 13.5px var(--police, inherit); }
+.jvp-refuser { color: #0b1430; background: #eef2fb; } .jvp-refuser:hover { background: #e0e7f6; }
+.jvp-autoriser { color: #fff; background: #1f5cff; } .jvp-autoriser:hover { background: #1647d6; }
+/* la fenêtre de discussion se range pendant que Jarvis travaille, pour laisser voir la page */
+html.jvp-actif .jv-panneau { opacity: 0; transform: translateY(14px); pointer-events: none; }
+html.jvp-actif .jv-bouton { opacity: 0; pointer-events: none; }
+@media (max-width: 560px) { .jvp-pastille b { display: none; } .jvp-stop kbd { display: none; } }
+@media (prefers-reduced-motion: reduce) { .jvp-cadre, .jvp-lueur, .jvp-logo, .jvp-cible, .jvp-pastille, .jvp-confirm, .jvp-onde { animation: none; } .jvp-racine { transition: none; } }
+
+/* bulle du mode « montre-moi comment » */
+.jvp-bulle { position: absolute; z-index: 4; pointer-events: auto; width: 320px; display: grid; gap: 10px; padding: 14px 16px; border-radius: 16px; background: #fff; color: #0b1430; box-shadow: 0 0 0 1.5px #2ee0d1, 0 24px 60px -16px rgba(6, 11, 20, .55); animation: jvp-entre .3s cubic-bezier(.16, 1, .3, 1) both; }
+.jvp-bulle p { margin: 0; font-size: 14px; line-height: 1.45; font-weight: 550; }
+.jvp-bulle button { justify-self: end; height: 34px; padding: 0 16px; border: 0; border-radius: 10px; cursor: pointer; font: 650 13px var(--police, inherit); color: #fff; background: #1f5cff; }

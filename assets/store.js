@@ -115,12 +115,14 @@
 
     ligne: function (it, qty) { return { itemId: it.id, nom: it.nom, desc: it.desc || '', prix: it.prix, unite: it.unite, rec: !!it.rec, qty: qty || 1 } },
     // Totaux : « unique » = prestations ponctuelles, « mensuel » = abonnements. La remise s’applique aux deux.
+    // une ligne « option » ne compte que si elle a été choisie ; d.tva === false : TVA non applicable (art. 293 B du CGI), TTC = HT
+    // (même calcul que doc_totals dans supabase/finance.sql)
     calc: function (d) {
-      var u = 0, m = 0
-      ;(d.lignes || []).forEach(function (l) { var t = (+l.prix || 0) * (+l.qty || 0); if (l.rec) m += t; else u += t })
-      var r = Math.min(Math.max(+d.remise || 0, 0), 100) / 100
+      var u = 0, m = 0, opt = 0
+      ;(d.lignes || []).forEach(function (l) { var t = (+l.prix || 0) * (+l.qty || 0); if (l.option && !l.choisie) { opt += t; return } if (l.rec) m += t; else u += t })
+      var r = Math.min(Math.max(+d.remise || 0, 0), 100) / 100, taux = d.tva === false ? 0 : TVA
       var uHT = u * (1 - r), mHT = m * (1 - r)
-      return { uniqueHT: uHT, mensuelHT: mHT, uniqueTTC: uHT * (1 + TVA), mensuelTTC: mHT * (1 + TVA), remiseMontant: (u + m) * r, brutHT: u + m }
+      return { uniqueHT: uHT, mensuelHT: mHT, uniqueTTC: uHT * (1 + taux), mensuelTTC: mHT * (1 + taux), remiseMontant: (u + m) * r, brutHT: u + m, optionsHT: opt, tauxTVA: taux }
     },
     eur: function (n) { return (+n || 0).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) },
     statutLabel: function (s) { var r = this.STATUTS.filter(function (x) { return x[0] === s })[0]; return r ? r[1] : s },
@@ -157,6 +159,20 @@
     })
   }
   var q = encodeURIComponent
+  // étape montrée au client (1 Découverte, 2 Conception, 3 Lancement, 4 Suivi) : celle du premier jalon non terminé du projet
+  // quand le projet a des étapes et des tâches, sinon d'après le statut du projet
+  function etapeClient(o) {
+    if (o.statut === 'livre') return 4
+    var et = Array.isArray(o.etapes) ? o.etapes : [], tk = Array.isArray(o.taches) ? o.taches : []
+    if (et.length && tk.length) {
+      for (var i = 0; i < et.length; i++) {
+        var siennes = tk.filter(function (t) { return t.etape === et[i].id })
+        if (siennes.some(function (t) { return !t.ok })) return Math.max(1, Math.min(4, +et[i].phase || 1))
+      }
+      return 4
+    }
+    return { afaire: 1, encours: 2, relecture: 3, livre: 4 }[o.statut] || 1
+  }
   function tbl(coll) { var t = TABLE[coll]; if (!t) throw new Error('liste inconnue : ' + coll); return t }
   function toObj(r) { var o = r.data || {}; o.id = r.id; if (!o.creeLe && r.created_at) o.creeLe = r.created_at; return o }
   function rows(coll) {
@@ -169,7 +185,7 @@
     var body = list.map(function (o) {
       var r = { id: String(o.id), data: o, deleted_at: null }; if (o.creeLe && !isNaN(Date.parse(o.creeLe))) r.created_at = o.creeLe
       // projet : visible dans l'espace client dès qu'il a un client (sauf si on a choisi « interne ») ; l'étape montrée au client suit l'étape du projet
-      if (coll === 'projets') { r.visible_client = !!o.clientId && o.visibleClient !== 'non'; r.etape = { afaire: 1, encours: 2, relecture: 3, livre: 4 }[o.statut] || 1 }
+      if (coll === 'projets') { r.visible_client = !!o.clientId && o.visibleClient !== 'non'; r.etape = etapeClient(o) }
       return r
     })
     delete cache[coll]
@@ -216,6 +232,8 @@
   Store.auth = {
     enabled: !!(SB && SB.url && SB.key),
     session: session,
+    // jeton de connexion à jour (renouvelé si besoin) : pour les fonctions serveur, comme l'assistant Jarvis
+    token: function () { return fresh().then(function (x) { return x.access_token }) },
     // création de compte par le client lui-même : sans fiche reliée (portal_accounts), le compte ne voit rien ; l'agence le relie ensuite
     // rend la session si Supabase ne demande pas de confirmer l'e-mail, sinon null (un e-mail de confirmation part)
     signUp: function (email, pw, nom, retour) {
@@ -240,6 +258,13 @@
     patch: function (path, body) { return api(path, { method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify(body) }) },
     del: function (path) { return api(path, { method: 'DELETE' }) },
     // lien temporaire (5 min) vers un fichier du stockage privé « documents » ; la base vérifie que le compte peut le lire
+    // dépôt d'un fichier dans le stockage privé « documents » (la base vérifie que le compte a le droit d'écrire à cet endroit)
+    deposer: function (chemin, fichier) {
+      return fresh().then(function (s) {
+        return fetch(SB.url + '/storage/v1/object/documents/' + String(chemin).split('/').map(encodeURIComponent).join('/'), { method: 'POST', headers: { apikey: SB.key, Authorization: 'Bearer ' + s.access_token, 'Content-Type': fichier.type || 'application/octet-stream', 'x-upsert': 'false' }, body: fichier })
+          .then(function (r) { if (!r.ok) return r.text().then(function (t) { throw new Error('Dépôt refusé (' + r.status + ') ' + t.slice(0, 120)) }); return chemin })
+      })
+    },
     fichier: function (chemin) {
       return fresh().then(function (s) {
         return fetch(SB.url + '/storage/v1/object/sign/documents/' + String(chemin).split('/').map(encodeURIComponent).join('/'), { method: 'POST', headers: { apikey: SB.key, Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 300 }) })

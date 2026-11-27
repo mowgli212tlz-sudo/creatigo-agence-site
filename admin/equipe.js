@@ -14,8 +14,8 @@
   var MASQUE = {
     super_admin: [],
     admin: ['equipe'],
-    chef_projet: ['factures', 'catalogue', 'donnees', 'equipe', 'journal'],
-    collaborateur: ['devis', 'factures', 'catalogue', 'donnees', 'equipe', 'journal'],
+    chef_projet: ['factures', 'catalogue', 'finances', 'donnees', 'equipe', 'journal'],
+    collaborateur: ['devis', 'factures', 'catalogue', 'finances', 'donnees', 'equipe', 'journal'],
   }
   var TABLES = [['clients', 'Clients', 'clients'], ['quotes', 'Devis', 'devis'], ['invoices', 'Factures', 'factures'], ['projects', 'Projets', 'projets'], ['appointments', 'Rendez-vous', 'rdv'], ['contact_messages', 'Messages du site', 'messages'], ['blog_posts', 'Blog', 'blog']]
   var ACTIONS = { insert: 'Création', update: 'Modification', delete: 'Suppression définitive', corbeille: 'Mise à la corbeille', restauration: 'Restauration', connexion: 'Connexion', deconnexion: 'Déconnexion', export: 'Export des données' }
@@ -36,6 +36,7 @@
     main.appendChild(e('div', { class: 'a-row r4' }, ROLES.map(function (r) { return e('div', { class: 'carte' }, [e('div', { class: 'carte-h' }, [e('span', { class: 'badge b-r-' + r[0], text: r[1] })]), e('p', { class: 'mut', text: ROLE_AIDE[r[0]] })]) })))
     var zone = e('div'), msg = e('p', { class: 'msg', role: 'status' })
     main.appendChild(zone); main.appendChild(msg)
+    main.appendChild(e('p', { class: 'mut', style: 'margin-top:20px', text: 'Les clés d’API de Jarvis, ses plafonds de jetons et la réponse automatique se règlent dans la page « Assistant IA ».' }))
     function draw() {
       zone.textContent = ''
       sb().get('staff_members?select=*&order=created_at').then(function (l) {
