@@ -308,7 +308,7 @@
   var still = matchMedia('(prefers-reduced-motion: reduce)').matches
   function show(i) {
     cur = i
-    its.forEach(function (it, k) { var on = k === i, b = it.querySelector('button'); it.classList.toggle('on', on); b.classList.toggle('on', on); b.setAttribute('aria-selected', on); it.querySelector('.bar i').style.transform = 'scaleX(0)' })
+    its.forEach(function (it, k) { var on = k === i, b = it.querySelector('button'); it.classList.toggle('on', on); b.classList.toggle('on', on); b.setAttribute('aria-expanded', on); it.querySelector('.bar i').style.transform = 'scaleX(0)' })
     imgs.forEach(function (im, k) { im.classList.toggle('on', k === i) })
     t0 = performance.now()
   }

@@ -26,7 +26,7 @@ html[data-theme="light"] {
   --ombre-carte: 0 0 0 1px rgba(14, 15, 19, .07), 0 14px 36px -22px rgba(14, 15, 19, .25);
   --halo: rgba(0, 85, 255, .14);
   --points: rgba(14, 15, 19, .09);
-  --barre-fond: #ffffff; --barre-encre: #3a3b42; --barre-pale: #a3a4ab; --barre-survol: #f4f4f5;
+  --barre-fond: #ffffff; --barre-encre: #3a3b42; --barre-pale: #6e6f77; /* titres de rubriques : contraste AA (était #a3a4ab, 2,5:1) */ --barre-survol: #f4f4f5;
 }
 html[data-theme="dark"] {
   --fond: #0a0e1a; --surface: #131a2b; --surface-2: #0f1626; --survol: #1a2236;
@@ -39,7 +39,7 @@ html[data-theme="dark"] {
   --ombre-carte: 0 0 0 1px rgba(255, 255, 255, .07), 0 16px 34px -18px rgba(0, 0, 0, .65);
   --halo: rgba(61, 123, 255, .2);
   --points: rgba(255, 255, 255, .06);
-  --barre-fond: #0e1424; --barre-encre: #c5cde8; --barre-pale: #6f7ba3; --barre-survol: rgba(255, 255, 255, .06);
+  --barre-fond: #0e1424; --barre-encre: #c5cde8; --barre-pale: #7480a8; /* contraste AA (était #6f7ba3, 4,4:1) */ --barre-survol: rgba(255, 255, 255, .06);
 }
 
 /* ---------- fond de page : dégradé bleu du site + trame de points ---------- */
@@ -92,7 +92,7 @@ html[data-theme] .barre-epingle { background: var(--surface-2); border: 1px soli
 html[data-theme] .barre-pied { border-top: 1px solid var(--trait); }
 html[data-theme] .barre-pied .profil { background: var(--surface-2); border: 1px solid var(--trait); border-radius: 18px; color: var(--encre); }
 html[data-theme] .barre-pied .profil .nom { color: var(--encre); }
-html[data-theme] .barre-pied .profil .role { color: var(--encre-3); }
+html[data-theme] .barre-pied .profil .role { color: var(--barre-pale); }
 html[data-theme] .avatar.nuit { background: var(--accent); border-color: var(--accent); color: #fff; border-radius: 12px; }
 html[data-theme] .btn-nuit { background: transparent; border: 1px solid var(--trait-fort); color: var(--encre-2); border-radius: 999px; }
 html[data-theme] .btn-nuit:hover { background: var(--encre); border-color: var(--encre); color: var(--surface); }
@@ -120,6 +120,9 @@ html[data-theme] .btn.principal, html[data-theme] .adm-main .btn:not(.ghost):not
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 8px 18px -8px rgba(0, 85, 255, .7);
 }
 html[data-theme] .btn.principal:hover, html[data-theme] .adm-main .btn:not(.ghost):not(.lien):not(.light):not(.verre):hover { background: var(--accent-fort); transform: translateY(-1px); }
+/* l'icône d'un bouton plein suit la couleur de son texte (sinon les icônes « accent » des en-têtes de page, prévues pour un bouton clair,
+   deviennent bleues sur bleu : Exporter (CSV), PDF / Imprimer…) */
+html[data-theme] .adm-main .btn:not(.ghost):not(.lien):not(.light):not(.verre) .ico { color: currentColor; }
 html[data-theme] .btn:not(.principal):not(.lien) { border-color: var(--trait-fort); }
 html[data-theme] .btn.lien { border-radius: 999px; }
 /* bouton secondaire du bandeau d'accueil : pilule sombre à flèche, comme « Prendre rendez-vous » du site */

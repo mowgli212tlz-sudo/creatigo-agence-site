@@ -260,3 +260,7 @@
 .jr-feuille .jr-couv h2 { font-size: 32px !important; line-height: 1.1 !important; letter-spacing: -.03em; color: #fff; margin: 0 !important; }
 .jr-feuille .jr-couv .jr-periode { font-size: 17px; }
 .jv-note-alerte { color: #b45309; font-weight: 600; }
+
+/* Bouton : le logo prend la couleur du texte du bouton (masque), donc reste visible dans tous les thèmes et états :
+   blanc sur le fond foncé du thème clair, foncé sur le fond clair du thème sombre, blanc au survol et quand Jarvis est ouvert. */
+.jv-bouton-logo { display: block; flex: none; width: 28px; height: 28px; margin-left: -2px; background: currentColor; -webkit-mask: url("../jarvis/jarvis-symbole-blanc.svg") center / contain no-repeat; mask: url("../jarvis/jarvis-symbole-blanc.svg") center / contain no-repeat; }

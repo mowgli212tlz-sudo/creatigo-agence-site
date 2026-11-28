@@ -505,7 +505,7 @@
   function monter() {
     pastille = h('span', { class: 'jv-pastille', hidden: true, 'aria-hidden': 'true' })
     bouton = h('button', { class: 'jv-bouton', type: 'button', 'aria-label': 'Ouvrir Jarvis, l’assistant IA', title: 'Jarvis (Ctrl+K)', 'aria-expanded': 'false', 'aria-controls': 'jv-panneau', onclick: function () { panneau.hidden ? ouvrir() : fermer() } },
-      marque('symbole-blanc', 28), h('span', { class: 'jv-bouton-txt' }, 'Jarvis'), pastille)
+      h('span', { class: 'jv-bouton-logo', 'aria-hidden': 'true' }), h('span', { class: 'jv-bouton-txt' }, 'Jarvis'), pastille)
     journal = h('div', { class: 'jv-journal', role: 'log', 'aria-live': 'polite', 'aria-label': 'Discussion avec Jarvis' })
     champ = h('textarea', { class: 'jv-champ', rows: '1', maxlength: '4000', placeholder: CLIENT ? 'Posez une question sur votre projet…' : 'Posez une question sur l’agence…', 'aria-label': 'Votre question pour Jarvis',
       oninput: ajuster, onkeydown: function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); demander(champ.value) } } })

@@ -1,0 +1,746 @@
+{
+ "fps": 30,
+ "total": 3539,
+ "scenes": [
+  {
+   "from": 0,
+   "dur": 219,
+   "vo": 14,
+   "voDur": 183,
+   "keys": [
+    129
+   ]
+  },
+  {
+   "from": 219,
+   "dur": 362,
+   "vo": 14,
+   "voDur": 326,
+   "keys": [
+    17,
+    128,
+    182,
+    263
+   ]
+  },
+  {
+   "from": 580,
+   "dur": 382,
+   "vo": 14,
+   "voDur": 346,
+   "keys": [
+    21,
+    190,
+    244,
+    312
+   ]
+  },
+  {
+   "from": 963,
+   "dur": 507,
+   "vo": 14,
+   "voDur": 471,
+   "keys": [
+    26,
+    112,
+    157,
+    278,
+    324,
+    424,
+    468
+   ]
+  },
+  {
+   "from": 1470,
+   "dur": 436,
+   "vo": 14,
+   "voDur": 400,
+   "keys": [
+    85,
+    145,
+    209,
+    283,
+    370
+   ]
+  },
+  {
+   "from": 1906,
+   "dur": 410,
+   "vo": 14,
+   "voDur": 374,
+   "keys": [
+    130,
+    193,
+    247,
+    288,
+    333
+   ]
+  },
+  {
+   "from": 2316,
+   "dur": 403,
+   "vo": 14,
+   "voDur": 367,
+   "keys": [
+    14,
+    68,
+    125,
+    188,
+    297
+   ]
+  },
+  {
+   "from": 2719,
+   "dur": 319,
+   "vo": 14,
+   "voDur": 283,
+   "keys": [
+    17,
+    81,
+    143,
+    221
+   ]
+  },
+  {
+   "from": 3038,
+   "dur": 501,
+   "vo": 14,
+   "voDur": 405,
+   "keys": [
+    103,
+    157,
+    246,
+    397
+   ]
+  }
+ ],
+ "cap16": [
+  {
+   "a": 14,
+   "b": 65,
+   "text": "Votre entreprise mérite mieux qu'un simple"
+  },
+  {
+   "a": 65,
+   "b": 88,
+   "text": "site internet."
+  },
+  {
+   "a": 88,
+   "b": 161,
+   "text": "Elle mérite une présence en ligne qui"
+  },
+  {
+   "a": 161,
+   "b": 200,
+   "text": "travaille vraiment pour vous."
+  },
+  {
+   "a": 232,
+   "b": 294,
+   "text": "Un site qui ne vous ressemble pas."
+  },
+  {
+   "a": 303,
+   "b": 367,
+   "text": "Une présence invisible sur Google."
+  },
+  {
+   "a": 398,
+   "b": 461,
+   "text": "Des prestataires dispersés."
+  },
+  {
+   "a": 467,
+   "b": 521,
+   "text": "Et souvent, aucune visibilité sur ce qui"
+  },
+  {
+   "a": 521,
+   "b": 559,
+   "text": "est réellement fait."
+  },
+  {
+   "a": 595,
+   "b": 657,
+   "text": "Chez Creatigo, nous réunissons tout ce"
+  },
+  {
+   "a": 658,
+   "b": 708,
+   "text": "dont votre entreprise a besoin,"
+  },
+  {
+   "a": 709,
+   "b": 742,
+   "text": "au même endroit."
+  },
+  {
+   "a": 754,
+   "b": 876,
+   "text": "Une seule équipe, un interlocuteur dédié,"
+  },
+  {
+   "a": 887,
+   "b": 938,
+   "text": "et un projet suivi de A à Z."
+  },
+  {
+   "a": 979,
+   "b": 1038,
+   "text": "De votre site vitrine à votre boutique en"
+  },
+  {
+   "a": 1038,
+   "b": 1101,
+   "text": "ligne, de vos applications à votre"
+  },
+  {
+   "a": 1102,
+   "b": 1173,
+   "text": "référencement, nous développons votre"
+  },
+  {
+   "a": 1173,
+   "b": 1262,
+   "text": "visibilité sur Google, les intelligences"
+  },
+  {
+   "a": 1262,
+   "b": 1309,
+   "text": "artificielles et les réseaux sociaux."
+  },
+  {
+   "a": 1310,
+   "b": 1387,
+   "text": "Nous pouvons aussi prendre en charge vos"
+  },
+  {
+   "a": 1388,
+   "b": 1454,
+   "text": "campagnes et vos supports marketing."
+  },
+  {
+   "a": 1486,
+   "b": 1534,
+   "text": "Notre méthode est simple :"
+  },
+  {
+   "a": 1549,
+   "b": 1597,
+   "text": "nous cadrons votre besoin,"
+  },
+  {
+   "a": 1612,
+   "b": 1656,
+   "text": "nous chiffrons chaque étape,"
+  },
+  {
+   "a": 1672,
+   "b": 1729,
+   "text": "vous validez les réalisations,"
+  },
+  {
+   "a": 1741,
+   "b": 1808,
+   "text": "puis nous continuons à faire évoluer votre"
+  },
+  {
+   "a": 1809,
+   "b": 1886,
+   "text": "projet. Toujours avec une vision claire."
+  },
+  {
+   "a": 1920,
+   "b": 1982,
+   "text": "Et avec votre espace client personnel,"
+  },
+  {
+   "a": 1983,
+   "b": 2025,
+   "text": "vous gardez le contrôle :"
+  },
+  {
+   "a": 2036,
+   "b": 2129,
+   "text": "avancement du projet, documents,"
+  },
+  {
+   "a": 2153,
+   "b": 2197,
+   "text": "échanges et factures."
+  },
+  {
+   "a": 2197,
+   "b": 2281,
+   "text": "Tout est centralisé, accessible à tout"
+  },
+  {
+   "a": 2282,
+   "b": 2298,
+   "text": "moment."
+  },
+  {
+   "a": 2330,
+   "b": 2423,
+   "text": "Restaurants, outils éducatifs,"
+  },
+  {
+   "a": 2441,
+   "b": 2518,
+   "text": "plateformes professionnelles ou solutions"
+  },
+  {
+   "a": 2519,
+   "b": 2598,
+   "text": "conçues avec l'intelligence artificielle :"
+  },
+  {
+   "a": 2610,
+   "b": 2659,
+   "text": "nous créons des expériences numériques"
+  },
+  {
+   "a": 2660,
+   "b": 2705,
+   "text": "adaptées à chaque projet."
+  },
+  {
+   "a": 2734,
+   "b": 2810,
+   "text": "Un interlocuteur dédié, des devis"
+  },
+  {
+   "a": 2810,
+   "b": 2914,
+   "text": "détaillés, des sites rapides et sécurisés,"
+  },
+  {
+   "a": 2925,
+   "b": 2970,
+   "text": "et surtout un accompagnement qui ne"
+  },
+  {
+   "a": 2971,
+   "b": 3023,
+   "text": "s'arrête pas à la mise en ligne."
+  },
+  {
+   "a": 3053,
+   "b": 3125,
+   "text": "Votre projet mérite une vraie stratégie."
+  },
+  {
+   "a": 3141,
+   "b": 3195,
+   "text": "Réservez dès maintenant votre appel"
+  },
+  {
+   "a": 3195,
+   "b": 3257,
+   "text": "gratuit de 30 minutes, sans engagement."
+  },
+  {
+   "a": 3258,
+   "b": 3357,
+   "text": "Vous repartirez avec des pistes concrètes,"
+  },
+  {
+   "a": 3358,
+   "b": 3426,
+   "text": "même si nous ne travaillons pas ensemble."
+  },
+  {
+   "a": 3435,
+   "b": 3469,
+   "text": "Creatigo."
+  }
+ ],
+ "cap9": [
+  {
+   "a": 14,
+   "b": 44,
+   "text": "Votre entreprise mérite"
+  },
+  {
+   "a": 45,
+   "b": 70,
+   "text": "mieux qu'un simple site"
+  },
+  {
+   "a": 71,
+   "b": 88,
+   "text": "internet."
+  },
+  {
+   "a": 88,
+   "b": 144,
+   "text": "Elle mérite une présence"
+  },
+  {
+   "a": 144,
+   "b": 171,
+   "text": "en ligne qui travaille"
+  },
+  {
+   "a": 172,
+   "b": 200,
+   "text": "vraiment pour vous."
+  },
+  {
+   "a": 232,
+   "b": 259,
+   "text": "Un site qui ne vous"
+  },
+  {
+   "a": 260,
+   "b": 294,
+   "text": "ressemble pas."
+  },
+  {
+   "a": 303,
+   "b": 347,
+   "text": "Une présence invisible sur"
+  },
+  {
+   "a": 347,
+   "b": 418,
+   "text": "Google. Des prestataires"
+  },
+  {
+   "a": 419,
+   "b": 461,
+   "text": "dispersés."
+  },
+  {
+   "a": 467,
+   "b": 492,
+   "text": "Et souvent, aucune"
+  },
+  {
+   "a": 493,
+   "b": 526,
+   "text": "visibilité sur ce qui est"
+  },
+  {
+   "a": 526,
+   "b": 559,
+   "text": "réellement fait."
+  },
+  {
+   "a": 595,
+   "b": 629,
+   "text": "Chez Creatigo, nous"
+  },
+  {
+   "a": 630,
+   "b": 664,
+   "text": "réunissons tout ce dont"
+  },
+  {
+   "a": 665,
+   "b": 708,
+   "text": "votre entreprise a besoin,"
+  },
+  {
+   "a": 709,
+   "b": 742,
+   "text": "au même endroit."
+  },
+  {
+   "a": 754,
+   "b": 795,
+   "text": "Une seule équipe,"
+  },
+  {
+   "a": 823,
+   "b": 876,
+   "text": "un interlocuteur dédié,"
+  },
+  {
+   "a": 887,
+   "b": 927,
+   "text": "et un projet suivi de A à"
+  },
+  {
+   "a": 928,
+   "b": 938,
+   "text": "Z."
+  },
+  {
+   "a": 979,
+   "b": 1011,
+   "text": "De votre site vitrine à"
+  },
+  {
+   "a": 1012,
+   "b": 1055,
+   "text": "votre boutique en ligne,"
+  },
+  {
+   "a": 1070,
+   "b": 1094,
+   "text": "de vos applications à"
+  },
+  {
+   "a": 1095,
+   "b": 1127,
+   "text": "votre référencement,"
+  },
+  {
+   "a": 1128,
+   "b": 1173,
+   "text": "nous développons votre"
+  },
+  {
+   "a": 1173,
+   "b": 1228,
+   "text": "visibilité sur Google,"
+  },
+  {
+   "a": 1240,
+   "b": 1262,
+   "text": "les intelligences"
+  },
+  {
+   "a": 1262,
+   "b": 1286,
+   "text": "artificielles et les"
+  },
+  {
+   "a": 1287,
+   "b": 1309,
+   "text": "réseaux sociaux."
+  },
+  {
+   "a": 1310,
+   "b": 1367,
+   "text": "Nous pouvons aussi prendre"
+  },
+  {
+   "a": 1368,
+   "b": 1406,
+   "text": "en charge vos campagnes et"
+  },
+  {
+   "a": 1407,
+   "b": 1454,
+   "text": "vos supports marketing."
+  },
+  {
+   "a": 1486,
+   "b": 1534,
+   "text": "Notre méthode est simple :"
+  },
+  {
+   "a": 1549,
+   "b": 1597,
+   "text": "nous cadrons votre besoin,"
+  },
+  {
+   "a": 1612,
+   "b": 1637,
+   "text": "nous chiffrons chaque"
+  },
+  {
+   "a": 1638,
+   "b": 1695,
+   "text": "étape, vous validez les"
+  },
+  {
+   "a": 1696,
+   "b": 1752,
+   "text": "réalisations, puis nous"
+  },
+  {
+   "a": 1753,
+   "b": 1800,
+   "text": "continuons à faire évoluer"
+  },
+  {
+   "a": 1801,
+   "b": 1830,
+   "text": "votre projet."
+  },
+  {
+   "a": 1840,
+   "b": 1868,
+   "text": "Toujours avec une vision"
+  },
+  {
+   "a": 1869,
+   "b": 1886,
+   "text": "claire."
+  },
+  {
+   "a": 1920,
+   "b": 1949,
+   "text": "Et avec votre espace"
+  },
+  {
+   "a": 1949,
+   "b": 1982,
+   "text": "client personnel,"
+  },
+  {
+   "a": 1983,
+   "b": 2025,
+   "text": "vous gardez le contrôle :"
+  },
+  {
+   "a": 2036,
+   "b": 2087,
+   "text": "avancement du projet,"
+  },
+  {
+   "a": 2099,
+   "b": 2175,
+   "text": "documents, échanges et"
+  },
+  {
+   "a": 2176,
+   "b": 2197,
+   "text": "factures."
+  },
+  {
+   "a": 2197,
+   "b": 2258,
+   "text": "Tout est centralisé,"
+  },
+  {
+   "a": 2259,
+   "b": 2298,
+   "text": "accessible à tout moment."
+  },
+  {
+   "a": 2330,
+   "b": 2395,
+   "text": "Restaurants, outils"
+  },
+  {
+   "a": 2396,
+   "b": 2454,
+   "text": "éducatifs, plateformes"
+  },
+  {
+   "a": 2454,
+   "b": 2504,
+   "text": "professionnelles ou"
+  },
+  {
+   "a": 2504,
+   "b": 2542,
+   "text": "solutions conçues avec"
+  },
+  {
+   "a": 2542,
+   "b": 2561,
+   "text": "l'intelligence"
+  },
+  {
+   "a": 2561,
+   "b": 2598,
+   "text": "artificielle :"
+  },
+  {
+   "a": 2610,
+   "b": 2625,
+   "text": "nous créons des"
+  },
+  {
+   "a": 2626,
+   "b": 2659,
+   "text": "expériences numériques"
+  },
+  {
+   "a": 2660,
+   "b": 2705,
+   "text": "adaptées à chaque projet."
+  },
+  {
+   "a": 2734,
+   "b": 2786,
+   "text": "Un interlocuteur dédié,"
+  },
+  {
+   "a": 2798,
+   "b": 2837,
+   "text": "des devis détaillés,"
+  },
+  {
+   "a": 2850,
+   "b": 2878,
+   "text": "des sites rapides et"
+  },
+  {
+   "a": 2879,
+   "b": 2939,
+   "text": "sécurisés, et surtout un"
+  },
+  {
+   "a": 2940,
+   "b": 2970,
+   "text": "accompagnement qui ne"
+  },
+  {
+   "a": 2971,
+   "b": 3004,
+   "text": "s'arrête pas à la mise en"
+  },
+  {
+   "a": 3004,
+   "b": 3023,
+   "text": "ligne."
+  },
+  {
+   "a": 3053,
+   "b": 3085,
+   "text": "Votre projet mérite une"
+  },
+  {
+   "a": 3086,
+   "b": 3125,
+   "text": "vraie stratégie."
+  },
+  {
+   "a": 3141,
+   "b": 3176,
+   "text": "Réservez dès maintenant"
+  },
+  {
+   "a": 3177,
+   "b": 3215,
+   "text": "votre appel gratuit de 30"
+  },
+  {
+   "a": 3216,
+   "b": 3257,
+   "text": "minutes, sans engagement."
+  },
+  {
+   "a": 3258,
+   "b": 3318,
+   "text": "Vous repartirez avec des"
+  },
+  {
+   "a": 3318,
+   "b": 3357,
+   "text": "pistes concrètes,"
+  },
+  {
+   "a": 3358,
+   "b": 3377,
+   "text": "même si nous ne"
+  },
+  {
+   "a": 3377,
+   "b": 3426,
+   "text": "travaillons pas ensemble."
+  },
+  {
+   "a": 3435,
+   "b": 3469,
+   "text": "Creatigo."
+  }
+ ]
+}

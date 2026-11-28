@@ -64,7 +64,7 @@
       msg, info,
       champ('Adresse e-mail', 'mail', mail), champ('Mot de passe', 'lock-keyhole', pw),
       h('button', { class: 'btn principal connexion-bouton', type: 'submit' }, ic('log-in', 17), 'Se connecter'),
-      separateur(), comptes(),
+      autresComptes(),
       h('div', { class: 'connexion-liens' }, h('button', { class: 'lien-discret', type: 'button', onclick: function () {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Saisissez d’abord votre adresse e-mail ci-dessus.'); mail.focus(); return }
         S.auth.recover(mail.value.trim(), location.origin + location.pathname).then(function () { dire(''); info.textContent = 'Si cette adresse est autorisée, un e-mail vient de vous être envoyé avec un lien pour choisir un nouveau mot de passe.'; info.hidden = false }, function () { dire('Envoi impossible pour le moment. Réessayez plus tard.') })
@@ -73,7 +73,7 @@
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { dire('Saisissez d’abord votre adresse e-mail ci-dessus.'); mail.focus(); return }
         S.auth.lienMagique(mail.value.trim().toLowerCase(), location.origin + location.pathname).then(function () { dire(''); info.textContent = 'Un lien de connexion vient de vous être envoyé par e-mail. Ouvrez-le sur cet appareil.'; info.hidden = false }, function (err) { dire('Envoi impossible : ' + err.message) })
       } }, 'Recevoir un lien par e-mail')),
-      h('p', { class: 'connexion-note' }, ic('info', 14), 'Pas encore de compte ? ', h('button', { class: 'lien-discret', type: 'button', onclick: inscription }, 'Créer un compte')))
+      noteCompte())
     form.addEventListener('submit', function (e) {
       e.preventDefault(); dire('')
       if (!mail.value.trim() || !pw.value) { dire('Renseignez votre adresse e-mail et votre mot de passe.'); return }
@@ -98,8 +98,35 @@
     }))
   }
   function separateur() { return h('div', { class: 'connexion-ou' }, h('span', {}, 'ou continuer avec')) }
+  // réglages publics de la connexion (Supabase) : quels fournisseurs sont réellement activés, inscriptions ouvertes ou non.
+  // Un bouton n'apparaît que si son fournisseur est activé : pas de bouton qui mène à une erreur.
+  var reglagesAuthP = null
+  function reglagesAuth() {
+    var SB = window.CREATIGO_SB
+    if (!reglagesAuthP) reglagesAuthP = !(SB && SB.url && SB.key) ? Promise.resolve(null) : fetch(SB.url + '/auth/v1/settings', { headers: { apikey: SB.key } })
+      .then(function (r) { return r.ok ? r.json() : null }).catch(function () { return null })
+    return reglagesAuthP
+  }
+  function autresComptes() {
+    var zone = h('div', { class: 'connexion-autres', hidden: true })
+    reglagesAuth().then(function (r) {
+      var actifs = COMPTES.filter(function (a) { return r && r.external && r.external[a[0]] === true })
+      if (!actifs.length) return
+      var grille = comptes(); grille.replaceChildren.apply(grille, [].slice.call(grille.children).filter(function (b, i) { return actifs.indexOf(COMPTES[i]) >= 0 }))
+      zone.replaceChildren(separateur(), grille); zone.hidden = false
+    })
+    return zone
+  }
 
   /* ---------- création de compte : le compte reste vide tant que l'agence ne l'a pas relié à une fiche client ---------- */
+  // « Créer un compte » seulement si les inscriptions sont ouvertes dans Supabase ; sinon, l'accès se demande à l'agence
+  function noteCompte() {
+    var p = h('p', { class: 'connexion-note' }, ic('info', 14), 'Pas encore de compte ? ', h('a', { class: 'lien-discret', href: '../contactez-nous/' }, 'Demandez votre accès à l’agence'))
+    reglagesAuth().then(function (r) {
+      if (r && r.disable_signup === false) p.replaceChildren(ic('info', 14), 'Pas encore de compte ? ', h('button', { class: 'lien-discret', type: 'button', onclick: inscription }, 'Créer un compte'))
+    })
+    return p
+  }
   function inscription() {
     var msg = h('div', { class: 'erreur', role: 'alert', hidden: true }), info = h('div', { class: 'ok', role: 'status', hidden: true })
     var nom = h('input', { type: 'text', autocomplete: 'name', required: true, placeholder: 'Prénom Nom ou entreprise' })
@@ -110,7 +137,7 @@
     var form = h('form', { class: 'connexion-carte', novalidate: true },
       h('div', { class: 'connexion-tete' }, h('h1', {}, 'Créer un compte'), h('p', { class: 'discret' }, 'Votre compte est relié à votre projet par l’agence, en général sous 24 h.')),
       msg, info, champ('Nom', 'user', nom), champ('Adresse e-mail', 'mail', mail), champ('Mot de passe (10 caractères minimum)', 'lock-keyhole', a), champ('Confirmer le mot de passe', 'lock-keyhole', b),
-      envoi, separateur(), comptes(), h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
+      envoi, autresComptes(), h('button', { class: 'lien-discret', type: 'button', onclick: function () { login() } }, 'J’ai déjà un compte'))
     form.addEventListener('submit', function (e) {
       e.preventDefault(); dire('')
       if (!nom.value.trim()) { dire('Indiquez votre nom.'); nom.focus(); return }
@@ -170,6 +197,8 @@
     { r: 'studio', l: 'Validation', ic: 'palette' },
     { r: 'messages', l: 'Messages', ic: 'message-circle' },
     { r: 'documents', l: 'Mes documents', ic: 'folder' },
+    { r: 'site', l: 'Mon site', ic: 'globe' },
+    { r: 'performances', l: 'Performances', ic: 'chart-column' },
     { r: 'echanges', l: 'Support', ic: 'headset', pastille: true },
     { r: 'facturation', l: 'Facturation', ic: 'receipt-text' },
     { r: 'parametres', l: 'Paramètres', ic: 'settings' },
@@ -283,7 +312,10 @@
       // validation des livrables, messagerie, centre documentaire (assets/portal-studio.js)
       studio: function () { return window.PortailStudio ? window.PortailStudio.livrables(outils()) : monProjet() },
       livrable: function () { return window.PortailStudio ? window.PortailStudio.livrable(outils(), parts[1], parts[2]) : monProjet() },
-      messages: function () { return window.PortailStudio ? window.PortailStudio.messages(outils(), parts[1]) : demandes() } }[v]
+      messages: function () { return window.PortailStudio ? window.PortailStudio.messages(outils(), parts[1]) : demandes() },
+      // site et maintenance, performances digitales (assets/portal-perf.js)
+      site: function () { return window.PortailPerf ? window.PortailPerf.site(outils()) : monProjet() },
+      performances: function () { return window.PortailPerf ? window.PortailPerf.performances(outils(), parts[1]) : monProjet() } }[v]
     if (v === 'documents' && window.PortailStudio) f = function () { return window.PortailStudio.documents(outils()) }
     Promise.resolve(f()).then(function (contenu) {
       if (!contenu) return
@@ -581,6 +613,7 @@
           h('p', { class: 'discret petit' }, 'Pour changer de nom ou d’adresse e-mail, écrivez à l’équipe.')),
         UI.carte('Mot de passe', 'au moins 10 caractères', form)),
       UI.carte('Affichage', 'clair ou sombre', h('div', { class: 'pc-filtres' }, theme('light', 'Clair', 'sun'), theme('dark', 'Sombre', 'moon'))),
+      window.CreatigoNotifPrefs ? window.CreatigoNotifPrefs.carte({ h: h, UI: UI, S: S, client: true }) : null,
       h('div', {}, h('button', { class: 'btn', type: 'button', onclick: function () { cache = null; S.auth.signOut().then(login) } }, ic('log-out', 15), 'Se déconnecter'))]
   }
 
@@ -648,5 +681,16 @@
 
   /* ---------- go ---------- */
   if (!S || !S.sb || !S.sb.enabled) { root.replaceChildren(h('main', { class: 'connexion', style: 'display:grid;place-items:center' }, h('div', { class: 'erreur', role: 'alert' }, 'L’espace client est momentanément indisponible.'))); return }
-  S.auth.fromHash().then(function (type) { if (type === 'invite' || type === 'recovery') newPassword(type); else boot() }, function () { boot() })
+  // retour d'une connexion par un fournisseur (Google…) qui a échoué : Supabase renvoie l'erreur dans l'adresse ; on l'explique au lieu de rester muet
+  function erreurRetour() {
+    var brut = (location.hash || '').replace(/^#/, '') + '&' + (location.search || '').replace(/^\?/, ''), p = {}
+    brut.split('&').forEach(function (x) { var i = x.indexOf('='); if (i > 0) p[x.slice(0, i)] = decodeURIComponent(x.slice(i + 1).replace(/\+/g, ' ')) })
+    if (!p.error && !p.error_code) return ''
+    history.replaceState(null, '', location.pathname)
+    if (p.error_code === 'signup_disabled' || /signups? not allowed/i.test(p.error_description || '')) return 'Aucun compte n’existe encore pour cette adresse. Demandez votre accès à l’agence, ou connectez-vous avec l’adresse e-mail de votre accès.'
+    if (p.error === 'access_denied' && !p.error_code) return 'Connexion annulée.'
+    return 'La connexion n’a pas abouti. Réessayez, ou connectez-vous avec votre adresse e-mail et votre mot de passe.'
+  }
+  var noteRetour = erreurRetour()
+  S.auth.fromHash().then(function (type) { if (type === 'invite' || type === 'recovery') newPassword(type); else if (noteRetour) login(noteRetour); else boot() }, function () { boot() })
 })()

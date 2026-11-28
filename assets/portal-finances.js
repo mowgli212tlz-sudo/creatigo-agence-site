@@ -21,11 +21,25 @@
   var ST_DEVIS = { envoye: ['À valider', 'attention'], accepte: ['Accepté', 'bon'], refuse: ['Refusé', 'critique'], nouveau: ['En préparation', ''] }
   var ST_FACT = { envoyee: ['À régler', 'attention'], retard: ['En retard', 'critique'], payee: ['Réglée', 'bon'] }
   var TYPE_F = { facture: 'Facture', acompte: 'Acompte', avoir: 'Avoir' }
+  // paiement en ligne (Stripe) : bouton affiché seulement si le serveur confirme que tout est configuré
+  var enLigne = false, enLigneLu = null
+  function lireEnLigne() { return enLigneLu || (enLigneLu = fetch('/api/paiement-session').then(function (r) { return r.ok ? r.json() : { actif: false } }).then(function (j) { enLigne = !!j.actif }, function () { enLigne = false })) }
+  function payer(f) {
+    var h = window.UI.h
+    if (!enLigne || f.type === 'avoir' || f.statut === 'payee' || !(+f.reste > 0.5)) return null
+    var b = h('button', { class: 'btn petit principal', type: 'button', onclick: function () {
+      b.disabled = true; b.textContent = 'Ouverture…'
+      window.CreatigoStore.auth.token().then(function (j) { return fetch('/api/paiement-session', { method: 'POST', headers: { Authorization: 'Bearer ' + j, 'Content-Type': 'application/json' }, body: JSON.stringify({ facture: f.id }) }) })
+        .then(function (r) { return r.json().then(function (x) { if (!r.ok || !x.url) throw new Error(x.erreur || 'Paiement indisponible.'); location.href = x.url }) })
+        .catch(function (er) { b.disabled = false; b.textContent = 'Payer en ligne'; window.UI.toast(er.message, 'erreur') })
+    } }, 'Payer en ligne')
+    return b
+  }
 
   window.PortailFinances = function (ctx) {
     var h = ctx.h, UI = ctx.UI, S = ctx.S, ic = ctx.ic
     var sur = function (p) { return p.catch(function () { return [] }) }
-    return Promise.all([sur(S.sb.get('client_quotes?select=*&order=created_at.desc')), sur(S.sb.get('client_invoices?select=*&order=date_emission.desc')), sur(S.sb.get('client_contracts?select=*&order=created_at.desc')), ctx.lire(true)]).then(function (r) {
+    return Promise.all([sur(S.sb.get('client_quotes?select=*&order=created_at.desc')), sur(S.sb.get('client_invoices?select=*&order=date_emission.desc')), sur(S.sb.get('client_contracts?select=*&order=created_at.desc')), ctx.lire(true), lireEnLigne()]).then(function (r) {
       var devis = r[0], factures = r[1], contrats = r[2], d = r[3]
       var aValider = devis.filter(function (q) { return q.statut === 'envoye' && !(q.valable_jusqu && q.valable_jusqu < today()) })
       var aSigner = contrats.filter(function (k) { return k.statut === 'envoye' })
@@ -34,6 +48,7 @@
       var docs = d.documents.filter(function (x) { return ['devis', 'facture', 'contrat'].indexOf(x.categorie) >= 0 })
 
       var out = [ctx.enTetePage('Votre', 'facturation', 'Vos devis à valider, vos contrats à signer et vos factures, au même endroit.'),
+        /paiement-ok/.test(location.hash) ? h('div', { class: 'ok', role: 'status' }, 'Merci ! Votre paiement est en cours de confirmation par Stripe : la facture sera marquée réglée dans quelques instants.') : null,
         h('div', { class: 'grille kpi' },
           UI.tuile('Devis à valider', String(aValider.length), aValider.length ? 'votre réponse est attendue' : 'rien en attente', aValider.length > 0, { icone: 'file-text' }),
           UI.tuile('Contrats à signer', String(aSigner.length), aSigner.length ? 'à lire et signer en ligne' : 'rien en attente', aSigner.length > 0, { icone: 'file-signature' }),
@@ -45,14 +60,14 @@
       if (contrats.length) out.push(UI.carte('Vos contrats', contrats.length + ' contrat(s)', h('div', { class: 'pf-liste' }, contrats.map(function (k) { return carteContrat(k) }))))
       // ---------- factures ----------
       if (factures.length) out.push(UI.carte('Vos factures', factures.length + ' document(s)', h('div', { class: 'table-zone', tabindex: '0', role: 'region', 'aria-label': 'Vos factures' }, h('table', {},
-        h('thead', {}, h('tr', {}, ['N°', 'Type', 'Émise le', 'À régler avant', 'Total', 'Réglé', 'Reste', 'Statut'].map(function (x, i) { return h('th', { class: i >= 4 && i <= 6 ? 'num' : null, scope: 'col' }, x) }))),
+        h('thead', {}, h('tr', {}, ['N°', 'Type', 'Émise le', 'À régler avant', 'Total', 'Réglé', 'Reste', 'Statut', ''].map(function (x, i) { return h('th', { class: i >= 4 && i <= 6 ? 'num' : null, scope: 'col' }, x) }))),
         h('tbody', {}, factures.map(function (f) {
           var st = ST_FACT[f.statut] || [f.statut, '']
           return h('tr', {}, h('td', {}, h('b', {}, f.ref)), h('td', {}, TYPE_F[f.type] || 'Facture'), h('td', {}, date(f.date_emission)), h('td', {}, f.type === 'avoir' ? '—' : date(f.echeance)),
-            h('td', { class: 'num' }, eur(f.total_ttc)), h('td', { class: 'num' }, eur(f.paye)), h('td', { class: 'num' }, f.type === 'avoir' ? '—' : eur(f.reste)), h('td', {}, UI.badge(st[0], st[1])))
+            h('td', { class: 'num' }, eur(f.total_ttc)), h('td', { class: 'num' }, eur(f.paye)), h('td', { class: 'num' }, f.type === 'avoir' ? '—' : eur(f.reste)), h('td', {}, UI.badge(st[0], st[1])), h('td', {}, payer(f)))
         })))),
         factures.some(function (f) { return (f.echeancier || []).length && f.statut !== 'payee' }) ? h('div', { class: 'pf-ech' }, h('h3', {}, 'Vos prochaines échéances'), h('ul', {}, [].concat.apply([], factures.filter(function (f) { return f.statut !== 'payee' }).map(function (f) { return (f.echeancier || []).map(function (e) { return h('li', { class: e.date < today() ? 'retard' : '' }, h('span', {}, date(e.date)), h('b', {}, eur(e.montant)), h('small', {}, f.ref)) }) })))) : null,
-        h('p', { class: 'discret petit pf-note' }, ic('info', 14), 'Règlement par virement (coordonnées sur la facture). Le paiement en ligne par carte arrive bientôt.')))
+        h('p', { class: 'discret petit pf-note' }, ic('info', 14), enLigne ? 'Payez par carte avec « Payer en ligne » (paiement sécurisé par Stripe), ou par virement (coordonnées sur la facture).' : 'Règlement par virement (coordonnées sur la facture).')))
       if (!devis.length && !contrats.length && !factures.length) out.push(UI.etatVide('Vos devis, contrats et factures apparaîtront ici dès que l’agence les partage.', 'receipt-text'))
       if (docs.length) out.push(ctx.listeDocuments(docs, '', d))
       out.push(h('p', { class: 'discret petit', style: 'display:flex;gap:8px;align-items:center' }, ic('info', 14), 'Une question sur un devis ou une facture ? ', h('a', { href: '#nouvelle' }, 'Écrivez-nous'), '.'))

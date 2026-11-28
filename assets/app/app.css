@@ -364,6 +364,9 @@ option:checked { background: var(--accent-doux); color: var(--encre); }
 
 /* tableaux */
 .table-zone { overflow-x: auto; }
+/* dans une carte sans marge, « > :not(header) { overflow: hidden } » coupait les colonnes des tableaux sur mobile (Statut, Échéance…) :
+   la zone de tableau reste défilante (les coins arrondis restent découpés, auto découpe aussi) */
+.carte.sans-marge > .table-zone { overflow-x: auto; }
 .table-zone:focus-visible { box-shadow: inset var(--anneau); }
 .carte > .table-zone, .carte > div > .table-zone { border: 1px solid var(--trait); border-radius: var(--r-m); }
 table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--surface); }
